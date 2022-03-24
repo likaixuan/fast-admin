@@ -1,35 +1,40 @@
 <template>
-  dev页面{{ formData }}
-  <dyForm :fieldMap="fieldMap" v-model="formData"></dyForm>
+  <dyForm :fieldMap="DataModel.queryFieldMap" v-model="DataModelM.queryParams"></dyForm>
+  {{DataModelM.queryParams}}
+  <div class="btn-panel">
+    <a-button @click="DataModelM.findAll">查询</a-button>
+    <a-button type="primary" @click="DataModelM.showEditPanel">新增</a-button>
+    <a-button type="primary" danger>删除</a-button>
+  </div>
+  <dyTable :dataModel="DataModelM"></dyTable>
+   <a-drawer
+      title="Basic Drawer"
+      placement="bottom"
+      height="100%"
+      :closable="true"
+      :visible="DataModelM.isShowEditPanel"
+      :get-container="false"
+      :style="{ position: 'absolute' }"
+      @close="DataModelM.hideEditPanel"
+    >
+      <p>Some contents...</p>
+    </a-drawer>
 </template>
 <script setup>
 import { reactive } from "vue";
+import useM from "@/hooks/useM.js";
+import DataModel from "@/model/DataModel";
 import dyForm from "components/dyForm/index.vue";
-const formData = reactive({name:222})
-const fieldMap = {
-  name: {
-    name: "name",
-    type: "input",
-    label: "名称",
-    rules:[{ required: true, message: 'Please input your username!',trigger:['change', 'blur'] }]
+import dyTable from "components/dyTable/index.vue"
+let DataModelM = useM(DataModel);
 
-  },
-  sexId: {
-    name: "sexId",
-    type: "select",
-    label: "性别",
-    options: {
-      list: [
-        {
-          label: "男",
-          value: 1,
-        },
-        {
-          label: "女",
-          value: 2,
-        },
-      ],
-    },
-  },
-};
+
 </script>
+<style lang="less" scoped>
+  .btn-panel {
+    margin:16px 0px;
+    .ant-btn {
+      margin-right:8px;
+    }
+  }
+</style>

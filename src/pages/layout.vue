@@ -19,7 +19,9 @@
         </a-menu>
       </div>
       <div class="layout-content">
-        <router-view></router-view>
+        <div class="page-container">
+          <router-view></router-view>
+        </div>
       </div>
     </div>
   </div>
@@ -57,6 +59,15 @@ const toPage = (path) => {
   }
   &-content {
     flex: 1;
+    position:relative;
+    .page-container {
+      position:absolute;
+      top:0px;
+      bottom:0px;
+      left:0px;
+      right:0px;
+      padding:24px 32px;
+    }
   }
 }
 </style>

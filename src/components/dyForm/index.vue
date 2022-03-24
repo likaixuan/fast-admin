@@ -1,5 +1,5 @@
 <template>
-  <a-form :model="modelValue" name="basic">
+  <a-form :model="modelValue" name="basic" layout="inline">
     <template v-for="item in fieldMap">
       <component
         :is="formMap[item.type]"
