@@ -14,7 +14,7 @@
             <a-menu-item key="1">角色管理</a-menu-item>
             <a-menu-item key="2">模块管理</a-menu-item>
             <a-menu-item key="3">数据模型</a-menu-item>
-            <a-menu-item key="4"  @click="toPage('/dev')">开发</a-menu-item>
+            <a-menu-item key="4" @click="toPage('/dev')">开发</a-menu-item>
           </a-sub-menu>
         </a-menu>
       </div>
@@ -59,14 +59,16 @@ const toPage = (path) => {
   }
   &-content {
     flex: 1;
-    position:relative;
+    position: relative;
     .page-container {
-      position:absolute;
-      top:0px;
-      bottom:0px;
-      left:0px;
-      right:0px;
-      padding:24px 32px;
+      position: absolute;
+      top: 0px;
+      bottom: 0px;
+      left: 0px;
+      right: 0px;
+      overflow: hidden;
+      overflow-y: auto;
+      padding: 24px 32px;
     }
   }
 }

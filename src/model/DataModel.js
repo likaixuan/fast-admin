@@ -1,7 +1,8 @@
 import request from "@/request";
 export default class DataModel {
-  static key = "data_model_id"
+  static primaryKey = "data_model_id"
   static url = "/admin/sys/dataModel"
+  static modelCname = "数据模型"
 
   static actions = {
     findAll(params) {

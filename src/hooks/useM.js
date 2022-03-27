@@ -1,5 +1,6 @@
-import { reactive, toRefs } from "vue";
+import { reactive, toRefs, computed } from "vue";
 import request from "@/request";
+import { check, deepCopy } from "@/utils/util.js";
 export default function (model, options = {}) {
   let url = model.url;
   let m = reactive({
@@ -15,6 +16,20 @@ export default function (model, options = {}) {
     createFieldMap: model.createFieldMap || {},
     updateFieldMap: model.updateFieldMap || {},
     listFieldMap: model.listFieldMap || {},
+    primaryKey: model.primaryKey,
+    isPage: true,
+    pageInfo: {
+      total: 0,
+      current: 1,
+      pageSize: 15,
+    },
+    isUpdate: computed(() => {
+      const val = m.editParams[model.primaryKey];
+      return !check.isUndefined(val) && !check.isNull(val);
+    }),
+    editPanelTitle: computed(() => {
+      return m.isUpdate ? `编辑${model.modelCname}` : `创建${model.modelCname}`;
+    }),
     ...options,
   });
 
@@ -45,15 +60,45 @@ export default function (model, options = {}) {
   // 查询全部
   const findAll = (
     options.findAll ||
-    async function ({ params = {} }) {
+    async function (options = {}) {
+      const { params } = options;
       showTableLoading();
       try {
         const res = await request.post(`${url}/findAll`, {
-          ...this.addQueryParams,
-          ...this.queryParams,
+          ...m.addQueryParams,
+          ...m.queryParams,
           ...params,
         });
-        this.tableData = res.data;
+        m.tableData = res.data;
+        hideTableLoading();
+        return res;
+      } catch (err) {
+        hideTableLoading();
+        return err;
+      }
+    }
+  ).bind(m);
+
+  // 分页查询
+  const find = (
+    options.find ||
+    async function (options = {}) {
+      const { params } = options;
+      console.log(123456);
+      showTableLoading();
+      try {
+        const res = await request.post(`${url}/find`, {
+          ...m.addQueryParams,
+          ...m.queryParams,
+          ...m.pageInfo,
+          ...params,
+        });
+        m.tableData = res.data.list;
+        m.pageInfo.total = res.data.total;
+        m.pageInfo.pageSize = Number(res.data.pageSize);
+
+        m.pageInfo.current = Number(res.data.current);
+
         hideTableLoading();
         return res;
       } catch (err) {
@@ -65,13 +110,27 @@ export default function (model, options = {}) {
 
   const save =
     options.save ||
-    async function (params) {
+    async function (options = {}) {
+      const { params } = options;
       showTableLoading();
+      showEditLoading();
       try {
-        const res = await request.post(`${url}/save`, params);
-        hideTableLoading();
+        const res = await request.post(`${url}/update`, {
+          ...m.addEditParams,
+          ...m.editParams,
+          ...params,
+        });
+        m.editParams = res.data;
+        hideEditLoading();
+        if (m.isPage) {
+          await find();
+        } else {
+          await findAll();
+        }
         return res;
       } catch (err) {
+        console.log(err, 4354545);
+        hideEditLoading();
         hideTableLoading();
         return err;
       }
@@ -95,6 +154,7 @@ export default function (model, options = {}) {
   return reactive({
     ...toRefs(m),
     findAll,
+    find,
     save,
     remove,
     showTableLoading,
@@ -102,6 +162,6 @@ export default function (model, options = {}) {
     showEditLoading,
     hideEditLoading,
     showEditPanel,
-    hideEditPanel
+    hideEditPanel,
   });
 }
