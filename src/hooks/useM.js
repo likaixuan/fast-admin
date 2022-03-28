@@ -8,15 +8,14 @@ export default function (model, options = {}) {
   let url = model.url;
   let m = reactive({
     queryParams: {},
-    editParams: {},
-    addEditParams: {},
+    updateParams: {},
+    addUpdateParams: {},
     addQueryParams: {},
     tableData: [],
     isShowTableLoading: false,
     isShowEditLoading: false,
     isShowEditPanel: false,
     queryFieldMap: model.queryFieldMap || {},
-    createFieldMap: model.createFieldMap || {},
     updateFieldMap: model.updateFieldMap || {},
     listFieldMap: model.listFieldMap || {},
     primaryKey: model.primaryKey,
@@ -28,7 +27,7 @@ export default function (model, options = {}) {
       pageSize: 15,
     },
     isUpdate: computed(() => {
-      const val = m.editParams[model.primaryKey];
+      const val = m.updateParams[model.primaryKey];
       return !check.isUndefined(val) && !check.isNull(val);
     }),
     editPanelTitle: computed(() => {
@@ -59,8 +58,8 @@ export default function (model, options = {}) {
     console.log(type,999)
     if(type === 'create') {
       console.log(type,32323)
-      m.editParams = {}
-      console.log(m.editParams,111132323)
+      m.updateParams = {}
+      console.log(m.updateParams,111132323)
 
     }
     m.isShowEditPanel = true;
@@ -127,8 +126,8 @@ export default function (model, options = {}) {
       showEditLoading();
       try {
         const res = await request.post(`${url}/update`, {
-          ...m.addEditParams,
-          ...m.editParams,
+          ...m.addUpdateParams,
+          ...m.updateParams,
           ...params,
         });
         if(m.isUpdate) {
@@ -136,7 +135,7 @@ export default function (model, options = {}) {
         } else {
           message.success('创建成功')
         }
-        m.editParams = res.data;
+        m.updateParams = res.data;
         hideEditLoading();
         if (m.isPage) {
           await find();

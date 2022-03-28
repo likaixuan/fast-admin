@@ -1,8 +1,8 @@
 import request from "@/request";
 export default class DataModel {
-  static primaryKey = "data_model_id"
-  static url = "/admin/sys/dataModel"
-  static modelCname = "数据模型"
+  static primaryKey = "data_model_id";
+  static url = "/admin/sys/dataModel";
+  static modelCname = "数据模型";
 
   static actions = {
     findAll(params) {
@@ -13,69 +13,91 @@ export default class DataModel {
     },
     remove(params) {
       return request.post("/admin/sys/dataModel/remove", params);
-    }
-  }
+    },
+  };
 
   static queryFieldMap = {
     data_model_name: {
       name: "data_model_name",
       type: "input",
       label: "数据模型名",
+      options: {
+        link: {
+          change: (formData, fieldMap, dataModel) => {
+            console.log("响应了 哈哈哈哈", formData, fieldMap, dataModel);
+            if (formData.data_model_name === "隐藏表名") {
+              fieldMap.table_name.notShow = true;
+            } else {
+              fieldMap.table_name.notShow = false;
+            }
+            if (formData.data_model_name === "禁用表名") {
+              fieldMap.table_name.disabled = true;
+            } else {
+              fieldMap.table_name.disabled = false;
+            }
+          },
+        },
+      },
     },
     table_name: {
       name: "table_name",
       type: "input",
       label: "表名",
     },
-  }
-
-  static createFieldMap = {
-    data_model_name: {
-      name: "data_model_name",
-      type: "input",
-      label: "数据模型名",
-    },
-    table_name: {
-      name: "table_name",
-      type: "input",
-      label: "表名",
-    },
-  }
+  };
 
   static updateFieldMap = {
     data_model_name: {
       name: "data_model_name",
       type: "input",
       label: "数据模型名",
+      options: {
+        link: {
+          change: (formData, fieldMap, dataModel) => {
+            console.log("响应了 哈哈哈哈", formData, fieldMap, dataModel);
+            if (formData.data_model_name === "xxx") {
+              fieldMap.table_name.notShow = true;
+            } else {
+              fieldMap.table_name.notShow = false;
+            }
+            if (formData.data_model_name === "禁用表名") {
+              fieldMap.table_name.disabled = true;
+            } else {
+              fieldMap.table_name.disabled = false;
+            }
+          },
+        },
+      },
     },
     table_name: {
       name: "table_name",
       type: "input",
       label: "表名",
     },
-    type: {
-      name: "type",
-      type: "input",
-      label: "类别",
-    },
-  }
+  };
 
   static listFieldMap = {
-    data_model_name: {
-      name: "data_model_name",
-      type: "input",
-      label: "数据模型名",
-    },
-    table_name: {
-      name: "table_name",
-      type: "input",
-      label: "表名",
-    },
+    // data_model_name: {
+    //   name: "data_model_name",
+    //   type: "input",
+    //   label: "数据模型名",
+    // },
+    // table_name: {
+    //   name: "table_name",
+    //   type: "input",
+    //   label: "表名",
+    // },
     type: {
       name: "type",
       type: "input",
       label: "类别",
+      options: {
+        link: {
+          change: (formData, fieldMap, dataModel) => {
+            console.log("响应了 哈哈哈哈", formData, fieldMap, dataModel);
+          },
+        },
+      },
     },
-  }
-
+  };
 }

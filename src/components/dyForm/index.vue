@@ -1,32 +1,41 @@
 <template>
-  <a-form :model="modelValue" name="basic" layout="inline">
+  <a-form :model="formData" name="basic" layout="inline">
     <template v-for="item in fieldMap">
       <component
         :is="formMap[item.type]"
         :info="item"
-        :formData="modelValue"
-        @change="onFormItemChange(item,$event)"
-        v-if="formMap[item.type]"
+        :dataModel="dataModel"
+        :formData="formData"
+        :fieldMap="fieldMap"
+        :name="name"
+        @change="onFormItemChange(item, $event)"
+        v-if="formMap[item.type] && !fieldMap[item.name].notShow"
       ></component>
     </template>
   </a-form>
 </template>
 <script setup>
 import { formMap } from "./index.js";
-import { defineProps, reactive } from "vue";
+import { defineProps, computed, toRefs } from "vue";
 const props = defineProps({
-  fieldMap: Object,
-  modelValue:Object
+  name: String,
+  dataModel: Object,
 });
+const fieldMap = computed(() => {
+  return props.dataModel[props.name + "FieldMap"];
+});
+const formData = computed(() => {
+  return props.dataModel[props.name + "Params"];
+});
+
 // 监听表单项变化
-const emit = defineEmits(['update:modelValue','change'])
-const onFormItemChange = (item,e) => {
-    props.modelValue[item.name] = e
-    emit('update:modelValue', props.modelValue)
-    emit('change',{
-        name:item.name,
-        value:e
-    })
+const emit = defineEmits(["change"]);
+const onFormItemChange = (item, e) => {
+  emit("change", {
+    type: "dyFromChange",
+    name: item.name,
+    value: e,
+  });
 };
 </script>
 <style lang="less" scoped></style>

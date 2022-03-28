@@ -1,13 +1,11 @@
 <template>
-  <dyForm
-    :fieldMap="DataModel.queryFieldMap"
-    v-model="DataModelM.queryParams"
-    @change="onChange"
-  ></dyForm>
+  <dyForm :dataModel="DataModelM" name="query" @change="onChange"></dyForm>
   <div class="btn-panel">
     <a-button @click="DataModelM.find()">查询</a-button>
     <a-button type="primary" @click="DataModelM.showEditPanel()">新增</a-button>
-    <a-button type="primary" danger @click="DataModelM.remove()">批量删除</a-button>
+    <a-button type="primary" danger @click="DataModelM.remove()"
+      >批量删除</a-button
+    >
   </div>
   <dyTable :dataModel="DataModelM"></dyTable>
   <a-modal
@@ -18,10 +16,7 @@
     width="800px"
     @ok="DataModelM.save()"
   >
-    <dyForm
-      :fieldMap="DataModel.updateFieldMap"
-      v-model="DataModelM.editParams"
-    ></dyForm>
+    <dyForm :dataModel="DataModelM" name="update"></dyForm>
   </a-modal>
 </template>
 <script setup>
@@ -31,9 +26,9 @@ import DataModel from "@/model/DataModel";
 import dyForm from "components/dyForm/index.vue";
 import dyTable from "components/dyTable/index.vue";
 let DataModelM = useM(DataModel);
-const onChange = (res)=>{
-  console.log(res,3223)
-}
+const onChange = (res) => {
+  console.log(res, 3223);
+};
 </script>
 <style lang="less" scoped>
 .btn-panel {
