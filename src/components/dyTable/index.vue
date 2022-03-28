@@ -5,6 +5,10 @@
     :loading="dataModel.isTableLoading"
     :columns="columns"
     :pagination="pagination"
+    :row-selection="{
+    selectedRowKeys: dataModel.selectedRowKeys,
+      onChange: onSelectChange,
+    }"
     @change="onTableChange"
   />
 </template>
@@ -35,7 +39,13 @@ const pagination = computed(() => {
   } else false;
 });
 
+const onSelectChange = (selectedRowKeys) => {
+  console.log("selectedRowKeys changed: ", selectedRowKeys);
+  props.dataModel.selectedRowKeys = selectedRowKeys;
+};
+
 const onTableChange = (...args) => {
+  // 分页改变
   if (args[0]) {
     props.dataModel.find({
       params: {

@@ -5,9 +5,9 @@
     @change="onChange"
   ></dyForm>
   <div class="btn-panel">
-    <a-button @click="DataModelM.find">查询</a-button>
-    <a-button type="primary" @click="DataModelM.showEditPanel">新增</a-button>
-    <a-button type="primary" danger>删除</a-button>
+    <a-button @click="DataModelM.find()">查询</a-button>
+    <a-button type="primary" @click="DataModelM.showEditPanel()">新增</a-button>
+    <a-button type="primary" danger @click="DataModelM.remove()">批量删除</a-button>
   </div>
   <dyTable :dataModel="DataModelM"></dyTable>
   <a-modal
@@ -16,7 +16,7 @@
     okText="保存"
     :title="DataModelM.editPanelTitle"
     width="800px"
-    @ok="DataModelM.save"
+    @ok="DataModelM.save()"
   >
     <dyForm
       :fieldMap="DataModel.updateFieldMap"

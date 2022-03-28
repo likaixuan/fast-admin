@@ -53,6 +53,11 @@ export default class DataModel {
       type: "input",
       label: "表名",
     },
+    type: {
+      name: "type",
+      type: "input",
+      label: "类别",
+    },
   }
 
   static listFieldMap = {
@@ -65,6 +70,11 @@ export default class DataModel {
       name: "table_name",
       type: "input",
       label: "表名",
+    },
+    type: {
+      name: "type",
+      type: "input",
+      label: "类别",
     },
   }
 

@@ -1,6 +1,9 @@
-import { reactive, toRefs, computed } from "vue";
+import { reactive, toRefs, computed ,createVNode} from "vue";
 import request from "@/request";
-import { check, deepCopy } from "@/utils/util.js";
+import { check, deepCopy,getIds} from "@/utils/util.js";
+import { message } from 'ant-design-vue';
+import { Modal } from 'ant-design-vue';
+import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
 export default function (model, options = {}) {
   let url = model.url;
   let m = reactive({
@@ -17,6 +20,7 @@ export default function (model, options = {}) {
     updateFieldMap: model.updateFieldMap || {},
     listFieldMap: model.listFieldMap || {},
     primaryKey: model.primaryKey,
+    selectedRowKeys:[],
     isPage: true,
     pageInfo: {
       total: 0,
@@ -50,7 +54,15 @@ export default function (model, options = {}) {
   };
 
   // 是否显示编辑区域
-  const showEditPanel = function () {
+  const showEditPanel = function (options={}) {
+    const { type = 'create' } = options
+    console.log(type,999)
+    if(type === 'create') {
+      console.log(type,32323)
+      m.editParams = {}
+      console.log(m.editParams,111132323)
+
+    }
     m.isShowEditPanel = true;
   };
   const hideEditPanel = function () {
@@ -84,7 +96,6 @@ export default function (model, options = {}) {
     options.find ||
     async function (options = {}) {
       const { params } = options;
-      console.log(123456);
       showTableLoading();
       try {
         const res = await request.post(`${url}/find`, {
@@ -120,6 +131,11 @@ export default function (model, options = {}) {
           ...m.editParams,
           ...params,
         });
+        if(m.isUpdate) {
+          message.success('保存成功')
+        } else {
+          message.success('创建成功')
+        }
         m.editParams = res.data;
         hideEditLoading();
         if (m.isPage) {
@@ -139,16 +155,47 @@ export default function (model, options = {}) {
   // 删除n条数据
   const remove =
     options.remove ||
-    async function (params) {
-      showTableLoading();
-      try {
-        const res = await request.post(`${url}/remove`, params);
-        hideTableLoading();
-        return res;
-      } catch (err) {
-        hideTableLoading();
-        return err;
+    async function (options = {}) {
+      const { params } = options;
+      const selectedRowKeysLen = m.selectedRowKeys.length
+      if(selectedRowKeysLen === 0) {
+        message.warning('请选中一条记录');
+        return
       }
+      Modal.confirm({
+        title: `提示`,
+        icon: createVNode(ExclamationCircleOutlined),
+        content: `当前共选中了${selectedRowKeysLen}条记录，您确定要删除吗？`,
+        okText: '确定',
+        okType: 'danger',
+        cancelText: '取消',
+        async onOk() {
+          showTableLoading();
+          try {
+            const res = await request.post(`${url}/remove`, {
+              ids:m.selectedRowKeys.map((item)=>{
+                return {
+                  [m.primaryKey]:item
+                }
+              })
+            });
+            message.success('删除成功')
+            hideTableLoading();
+            if (m.isPage) {
+              await find();
+            } else {
+              await findAll();
+            }
+            return res;
+          } catch (err) {
+            hideTableLoading();
+            return err;
+          }
+        },
+        onCancel() {
+          message.info('已取消删除');
+        },
+      });
     };
 
   return reactive({

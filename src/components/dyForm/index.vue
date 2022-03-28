@@ -4,6 +4,7 @@
       <component
         :is="formMap[item.type]"
         :info="item"
+        :formData="modelValue"
         @change="onFormItemChange(item,$event)"
         v-if="formMap[item.type]"
       ></component>
