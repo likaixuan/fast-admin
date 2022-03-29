@@ -1,10 +1,10 @@
 import index from "./index.vue";
-import { addFormItem } from "components/dyForm/index.js";
+import { addFormItem } from "components/base/dyForm/index.js";
 export default {
   install(app) {
-    app.component("selectItem", index);
+    app.component("inputItem", index);
     addFormItem({
-      name: "select",
+      name: "input",
       component: index,
     });
   },

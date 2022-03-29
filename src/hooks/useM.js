@@ -1,11 +1,12 @@
-import { reactive, toRefs, computed ,createVNode} from "vue";
+import { reactive, toRefs, computed, createVNode } from "vue";
 import request from "@/request";
-import { check, deepCopy,getIds} from "@/utils/util.js";
-import { message } from 'ant-design-vue';
-import { Modal } from 'ant-design-vue';
-import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
+import { check, deepCopy, getIds, objToUrl } from "@/utils/util.js";
+import { message } from "ant-design-vue";
+import { Modal } from "ant-design-vue";
+import { ExclamationCircleOutlined } from "@ant-design/icons-vue";
 export default function (model, options = {}) {
   let url = model.url;
+  let urlSuffix = model.urlSuffix || "";
   let m = reactive({
     queryParams: {},
     updateParams: {},
@@ -19,8 +20,9 @@ export default function (model, options = {}) {
     updateFieldMap: model.updateFieldMap || {},
     listFieldMap: model.listFieldMap || {},
     primaryKey: model.primaryKey,
-    selectedRowKeys:[],
+    selectedRowKeys: [],
     isPage: true,
+    dialogWidth:'50%',
     pageInfo: {
       total: 0,
       current: 1,
@@ -53,14 +55,13 @@ export default function (model, options = {}) {
   };
 
   // 是否显示编辑区域
-  const showEditPanel = function (options={}) {
-    const { type = 'create' } = options
-    console.log(type,999)
-    if(type === 'create') {
-      console.log(type,32323)
-      m.updateParams = {}
-      console.log(m.updateParams,111132323)
-
+  const showEditPanel = function (options = {}) {
+    const { type = "create" } = options;
+    console.log(type, 999);
+    if (type === "create") {
+      console.log(type, 32323);
+      m.updateParams = {};
+      console.log(m.updateParams, 111132323);
     }
     m.isShowEditPanel = true;
   };
@@ -75,7 +76,7 @@ export default function (model, options = {}) {
       const { params } = options;
       showTableLoading();
       try {
-        const res = await request.post(`${url}/findAll`, {
+        const res = await request.post(`${url}/findAll${urlSuffix}`, {
           ...m.addQueryParams,
           ...m.queryParams,
           ...params,
@@ -97,12 +98,15 @@ export default function (model, options = {}) {
       const { params } = options;
       showTableLoading();
       try {
-        const res = await request.post(`${url}/find`, {
-          ...m.addQueryParams,
-          ...m.queryParams,
-          ...m.pageInfo,
-          ...params,
-        });
+        let suffix = urlSuffix ? urlSuffix.slice(1) : urlSuffix;
+        const res = await request.post(
+          `${url}/find${objToUrl(m.pageInfo)}${suffix}`,
+          {
+            ...m.addQueryParams,
+            ...m.queryParams,
+            ...params,
+          }
+        );
         m.tableData = res.data.list;
         m.pageInfo.total = res.data.total;
         m.pageInfo.pageSize = Number(res.data.pageSize);
@@ -112,6 +116,7 @@ export default function (model, options = {}) {
         hideTableLoading();
         return res;
       } catch (err) {
+        console.log(err,343434)
         hideTableLoading();
         return err;
       }
@@ -122,18 +127,22 @@ export default function (model, options = {}) {
     options.save ||
     async function (options = {}) {
       const { params } = options;
+      if (m.isShowEditLoading) {
+        message.error("不可重复点击！");
+        return
+      } 
       showTableLoading();
       showEditLoading();
       try {
-        const res = await request.post(`${url}/update`, {
+        const res = await request.post(`${url}/update${urlSuffix}`, {
           ...m.addUpdateParams,
           ...m.updateParams,
           ...params,
         });
-        if(m.isUpdate) {
-          message.success('保存成功')
+        if (m.isUpdate) {
+          message.success("保存成功");
         } else {
-          message.success('创建成功')
+          message.success("创建成功");
         }
         m.updateParams = res.data;
         hideEditLoading();
@@ -156,29 +165,29 @@ export default function (model, options = {}) {
     options.remove ||
     async function (options = {}) {
       const { params } = options;
-      const selectedRowKeysLen = m.selectedRowKeys.length
-      if(selectedRowKeysLen === 0) {
-        message.warning('请选中一条记录');
-        return
+      const selectedRowKeysLen = m.selectedRowKeys.length;
+      if (selectedRowKeysLen === 0) {
+        message.warning("请选中一条记录");
+        return;
       }
       Modal.confirm({
         title: `提示`,
         icon: createVNode(ExclamationCircleOutlined),
         content: `当前共选中了${selectedRowKeysLen}条记录，您确定要删除吗？`,
-        okText: '确定',
-        okType: 'danger',
-        cancelText: '取消',
+        okText: "确定",
+        okType: "danger",
+        cancelText: "取消",
         async onOk() {
           showTableLoading();
           try {
-            const res = await request.post(`${url}/remove`, {
-              ids:m.selectedRowKeys.map((item)=>{
+            const res = await request.post(`${url}/remove${urlSuffix}`, {
+              ids: m.selectedRowKeys.map((item) => {
                 return {
-                  [m.primaryKey]:item
-                }
-              })
+                  [m.primaryKey]: item,
+                };
+              }),
             });
-            message.success('删除成功')
+            message.success("删除成功");
             hideTableLoading();
             if (m.isPage) {
               await find();
@@ -192,7 +201,7 @@ export default function (model, options = {}) {
           }
         },
         onCancel() {
-          message.info('已取消删除');
+          message.info("已取消删除");
         },
       });
     };

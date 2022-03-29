@@ -2,11 +2,11 @@
   <a-table
     :rowKey="dataModel.primaryKey"
     :dataSource="dataModel.tableData"
-    :loading="dataModel.isTableLoading"
+    :loading="dataModel.isShowTableLoading"
     :columns="columns"
     :pagination="pagination"
     :row-selection="{
-    selectedRowKeys: dataModel.selectedRowKeys,
+      selectedRowKeys: dataModel.selectedRowKeys,
       onChange: onSelectChange,
     }"
     @change="onTableChange"

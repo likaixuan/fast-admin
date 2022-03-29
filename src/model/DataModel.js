@@ -3,19 +3,7 @@ export default class DataModel {
   static primaryKey = "data_model_id";
   static url = "/admin/sys/dataModel";
   static modelCname = "数据模型";
-
-  static actions = {
-    findAll(params) {
-      return request.post("/admin/sys/dataModel/findAll", params);
-    },
-    update(params) {
-      return request.post("/admin/sys/dataModel/update", params);
-    },
-    remove(params) {
-      return request.post("/admin/sys/dataModel/remove", params);
-    },
-  };
-
+  
   static queryFieldMap = {
     data_model_name: {
       name: "data_model_name",

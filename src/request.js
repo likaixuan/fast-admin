@@ -2,7 +2,7 @@
  * @file http request 配置
  * @author likaixuan <1375502718@qq.com>
  */
-
+ import { message } from "ant-design-vue";
  import axios from "axios";
  import qs from "qs";
  
@@ -43,6 +43,7 @@
      return res.data;
    },
    (error) => {
+    message.error('网络错误，请重试')
      if (
        error.response &&
        [403, 401, 405].indexOf(error.response.status) !== -1
