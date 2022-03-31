@@ -98,7 +98,7 @@ export default function (model, options = {}) {
       const { params } = options;
       showTableLoading();
       try {
-        let suffix = urlSuffix ? urlSuffix.slice(1) : urlSuffix;
+        let suffix = urlSuffix ? '&'+ urlSuffix.slice(1) : urlSuffix;
         const res = await request.post(
           `${url}/find${objToUrl(m.pageInfo)}${suffix}`,
           {

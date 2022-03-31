@@ -9,23 +9,6 @@ export default class DataModel {
       name: "data_model_name",
       type: "input",
       label: "数据模型名",
-      options: {
-        link: {
-          change: (formData, fieldMap, dataModel) => {
-            console.log("响应了 哈哈哈哈", formData, fieldMap, dataModel);
-            if (formData.data_model_name === "隐藏表名") {
-              fieldMap.table_name.notShow = true;
-            } else {
-              fieldMap.table_name.notShow = false;
-            }
-            if (formData.data_model_name === "禁用表名") {
-              fieldMap.table_name.disabled = true;
-            } else {
-              fieldMap.table_name.disabled = false;
-            }
-          },
-        },
-      },
     },
     table_name: {
       name: "table_name",
@@ -65,16 +48,16 @@ export default class DataModel {
   };
 
   static listFieldMap = {
-    // data_model_name: {
-    //   name: "data_model_name",
-    //   type: "input",
-    //   label: "数据模型名",
-    // },
-    // table_name: {
-    //   name: "table_name",
-    //   type: "input",
-    //   label: "表名",
-    // },
+    data_model_name: {
+      name: "data_model_name",
+      type: "input",
+      label: "数据模型名",
+    },
+    table_name: {
+      name: "table_name",
+      type: "input",
+      label: "表名",
+    },
     type: {
       name: "type",
       type: "input",

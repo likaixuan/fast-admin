@@ -12,9 +12,12 @@
           <a-sub-menu key="sys">
             <template #title>系统管理</template>
             <a-menu-item key="1">角色管理</a-menu-item>
-            <a-menu-item key="2">模块管理</a-menu-item>
-            <a-menu-item key="3">数据模型</a-menu-item>
-            <a-menu-item key="4" @click="toPage('/dev')">开发</a-menu-item>
+            <a-menu-item key="2" @click="toPage('/module')"
+              >模块管理</a-menu-item
+            >
+            <a-menu-item key="3" @click="toPage('/dataModel')"
+              >数据模型</a-menu-item
+            >
           </a-sub-menu>
         </a-menu>
       </div>
@@ -29,7 +32,7 @@
 <script setup>
 import { useRouter } from "vue-router";
 const router = useRouter();
-let selectedKeys = ["4"];
+let selectedKeys = ["2"];
 let openKeys = ["sys"];
 
 const toPage = (path) => {

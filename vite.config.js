@@ -13,6 +13,7 @@ export default defineConfig({
     proxy: {
       // 字符串简写写法
       "/admin": "http://127.0.0.1:7001",
+      "/common": "http://127.0.0.1:7001",
       // 选项写法
     },
   },

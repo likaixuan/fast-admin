@@ -9,6 +9,8 @@
   </a-form-item>
 </template>
 <script setup>
+import { defineProps } from "vue";
+
 const props = defineProps({
   info: Object,
   name: String,
