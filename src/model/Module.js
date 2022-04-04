@@ -2,9 +2,7 @@ import request from "@/request";
 export default class Module {
   static tableName = "module";
   static primaryKey = "module_id";
-  static url = "/common/base";
-  static modelCname = "模块";
-  static urlSuffix = `?tableName=${this.tableName}&primaryKey=${this.primaryKey}`;
+  static modelCname = "模块管理";
 
   static queryFieldMap = {
     module_name: {
@@ -19,12 +17,7 @@ export default class Module {
         name: "module_name",
         type: "input",
         label: "模块名",
-      },
-    //   module_code: {
-    //     name: "module_code",
-    //     type: "input",
-    //     label: "模块编码",
-    //   },
+      }
   };
 
   static listFieldMap = {
@@ -32,11 +25,6 @@ export default class Module {
         name: "module_name",
         type: "input",
         label: "模块名",
-      },
-    //   module_code: {
-    //     name: "module_code",
-    //     type: "input",
-    //     label: "模块编码",
-    //   },
+      }
   };
 }

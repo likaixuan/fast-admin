@@ -14,9 +14,13 @@
     <template #bodyCell="{ column, record }">
       <template v-if="column.dataIndex === '_action'">
         <!-- <a-button> -->
-        <form-outlined @click="dataModel.showEditPanel({
-          addParams:record
-        })" />
+        <form-outlined
+          @click="
+            dataModel.showEditPanel({
+              addParams: record,
+            })
+          "
+        />
         <!-- </a-button> -->
       </template>
       <!-- 常规 -->
@@ -80,12 +84,9 @@ const onSelectChange = (selectedRowKeys) => {
 const onTableChange = (...args) => {
   // 分页改变
   if (args[0]) {
-    props.dataModel.find({
-      params: {
-        current: args[0].current,
-        pageSize: args[0].pageSize,
-      },
-    });
+    props.dataModel.pageInfo.current = args[0].current;
+    props.dataModel.pageInfo.pageSize = args[0].pageSize;
+    props.dataModel.find();
   }
 };
 

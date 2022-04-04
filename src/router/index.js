@@ -2,13 +2,15 @@ import { createRouter, createWebHashHistory } from "vue-router";
 const login = () => import("@/pages/login.vue");
 const module = () => import("@/pages/sys/module/index.vue");
 const dataModel = () => import("@/pages/sys/dataModel/index.vue");
+const test = () => import("@/pages/sys/test/index.vue");
+
 const layout = () => import("@/pages/layout.vue");
 
 
 const routes = [
   {
     path: "/",
-    redirect:"/dataModel",
+    redirect:"/test",
     component: layout,
     children: [
       {
@@ -18,6 +20,10 @@ const routes = [
       {
         path: "/dataModel",
         component: dataModel
+      },
+      {
+        path: "/test",
+        component: test
       }
     ],
   },

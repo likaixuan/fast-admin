@@ -16,8 +16,9 @@
               >模块管理</a-menu-item
             >
             <a-menu-item key="3" @click="toPage('/dataModel')"
-              >数据模型</a-menu-item
-            >
+              >数据模型</a-menu-item>
+            <a-menu-item key="4" @click="toPage('/test')"
+              >测试</a-menu-item>
           </a-sub-menu>
         </a-menu>
       </div>
@@ -32,7 +33,7 @@
 <script setup>
 import { useRouter } from "vue-router";
 const router = useRouter();
-let selectedKeys = ["2"];
+let selectedKeys = ["4"];
 let openKeys = ["sys"];
 
 const toPage = (path) => {

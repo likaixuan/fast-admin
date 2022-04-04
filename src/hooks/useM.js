@@ -5,8 +5,8 @@ import { message } from "ant-design-vue";
 import { Modal } from "ant-design-vue";
 import { ExclamationCircleOutlined } from "@ant-design/icons-vue";
 export default function (model, options = {}) {
-  let url = model.url;
-  let urlSuffix = model.urlSuffix || "";
+  let url = model.url || '/common/base';
+  let urlSuffix = model.urlSuffix || `?tableName=${model.tableName}&primaryKey=${model.primaryKey}`;
   let m = reactive({
     queryParams: {},
     updateParams: {},
@@ -16,13 +16,29 @@ export default function (model, options = {}) {
     isShowTableLoading: false,
     isShowEditLoading: false,
     isShowEditPanel: false,
+    isShowQueryPanel: true,
+    buttonSize: "middle", // large | middle | small
     queryFieldMap: model.queryFieldMap || {},
     updateFieldMap: model.updateFieldMap || {},
     listFieldMap: model.listFieldMap || {},
     primaryKey: model.primaryKey,
     selectedRowKeys: [],
+    $parent: null,
+    pParams: computed(() => {
+      if (!m.$parent) {
+        return {};
+      }
+      const $parent = m.$parent;
+      if ($parent.isUpdate) {
+        return {
+          [$parent.primaryKey]: $parent.updateParams[$parent.primaryKey]
+        };
+      } else {
+        return {};
+      }
+    }), // 父参数
     isPage: true,
-    dialogWidth: "50%",
+    dialogWidth: "100%",
     pageInfo: {
       total: 0,
       current: 1,
@@ -37,6 +53,12 @@ export default function (model, options = {}) {
     }),
     ...options,
   });
+
+  for (let key in options) {
+    if (key.slice(-1) === "M") {
+      m[key].$parent = m;
+    }
+  }
 
   // 表格loading
   const showTableLoading = function () {
@@ -77,6 +99,7 @@ export default function (model, options = {}) {
           ...m.addQueryParams,
           ...m.queryParams,
           ...params,
+          ...m.pParams,
         });
         m.tableData = res.data;
         hideTableLoading();
@@ -102,6 +125,7 @@ export default function (model, options = {}) {
             ...m.addQueryParams,
             ...m.queryParams,
             ...params,
+            ...m.pParams,
           }
         );
         m.tableData = res.data.list;
@@ -135,6 +159,7 @@ export default function (model, options = {}) {
           ...m.addUpdateParams,
           ...m.updateParams,
           ...params,
+          ...m.pParams,
         });
         if (m.isUpdate) {
           message.success("保存成功");
