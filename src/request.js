@@ -9,22 +9,22 @@
  let request = axios.create({
    baseURL:'',
    timeout: 10000,
-   transformRequest: [
-     function (data) {
-       if (data instanceof FormData) {
-         return data;
-       }
-       // 过滤空字符串
-       for (let key in data) {
-         if (data[key] === null) {
-           delete data[key];
-         }
-       }
-       return qs.stringify(data, {
-         allowDots: true,
-       });
-     },
-   ],
+  //  transformRequest: [
+  //    function (data) {
+  //      if (data instanceof FormData) {
+  //        return data;
+  //      }
+  //      // 过滤空字符串
+  //      for (let key in data) {
+  //        if (data[key] === null) {
+  //          delete data[key];
+  //        }
+  //      }
+  //      return qs.stringify(data, {
+  //        allowDots: true,
+  //      });
+  //    },
+  //  ],
  });
  
  // 拦截请求

@@ -10,22 +10,55 @@
       onChange: onSelectChange,
     }"
     @change="onTableChange"
-  />
+  >
+    <template #bodyCell="{ column, record }">
+      <template v-if="column.dataIndex === '_action'">
+        <!-- <a-button> -->
+        <form-outlined @click="dataModel.showEditPanel({
+          addParams:record
+        })" />
+        <!-- </a-button> -->
+      </template>
+      <!-- 常规 -->
+      <template v-else>
+        {{ record[column.dataIndex] }}
+      </template>
+    </template>
+  </a-table>
 </template>
 <script setup>
 import { defineProps, computed } from "vue";
+import { FormOutlined } from "@ant-design/icons-vue";
+import { Item } from "ant-design-vue/lib/menu";
 const props = defineProps({
   dataModel: Object,
 });
 
 const columns = computed(() => {
   const listFieldMap = props.dataModel.listFieldMap;
-  return Object.keys(listFieldMap).map((name) => {
-    return {
-      title: listFieldMap[name].label,
-      dataIndex: listFieldMap[name].name,
-    };
-  });
+  let columns = Object.keys(listFieldMap)
+    .filter((name) => {
+      return listFieldMap[name].canUse !== false;
+    })
+    .map((name) => {
+      let item = {
+        title: listFieldMap[name].label,
+        dataIndex: listFieldMap[name].name,
+      };
+      if (listFieldMap[name].width) {
+        item.width = listFieldMap[name].width;
+      }
+      return item;
+    });
+  if (!listFieldMap._action) {
+    columns.unshift({
+      title: "操作",
+      dataIndex: "_action",
+      width: 60,
+      align: "center",
+    });
+  }
+  return columns;
 });
 
 const pagination = computed(() => {

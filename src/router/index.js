@@ -8,6 +8,7 @@ const layout = () => import("@/pages/layout.vue");
 const routes = [
   {
     path: "/",
+    redirect:"/dataModel",
     component: layout,
     children: [
       {

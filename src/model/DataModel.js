@@ -1,9 +1,14 @@
 import request from "@/request";
 export default class DataModel {
+  // static primaryKey = "data_model_id";
+  // static url = "/admin/sys/dataModel";
+  // static modelCname = "数据模型";
+  static tableName = "data_model";
   static primaryKey = "data_model_id";
-  static url = "/admin/sys/dataModel";
+  static url = "/common/base";
   static modelCname = "数据模型";
-  
+  static urlSuffix = `?tableName=${this.tableName}&primaryKey=${this.primaryKey}`;
+
   static queryFieldMap = {
     data_model_name: {
       name: "data_model_name",

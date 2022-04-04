@@ -22,7 +22,7 @@ export default function (model, options = {}) {
     primaryKey: model.primaryKey,
     selectedRowKeys: [],
     isPage: true,
-    dialogWidth:'50%',
+    dialogWidth: "50%",
     pageInfo: {
       total: 0,
       current: 1,
@@ -56,13 +56,10 @@ export default function (model, options = {}) {
 
   // 是否显示编辑区域
   const showEditPanel = function (options = {}) {
-    const { type = "create" } = options;
-    console.log(type, 999);
-    if (type === "create") {
-      console.log(type, 32323);
-      m.updateParams = {};
-      console.log(m.updateParams, 111132323);
-    }
+    const { addParams = {} } = options;
+    m.updateParams = {
+      ...addParams,
+    };
     m.isShowEditPanel = true;
   };
   const hideEditPanel = function () {
@@ -98,7 +95,7 @@ export default function (model, options = {}) {
       const { params } = options;
       showTableLoading();
       try {
-        let suffix = urlSuffix ? '&'+ urlSuffix.slice(1) : urlSuffix;
+        let suffix = urlSuffix ? "&" + urlSuffix.slice(1) : urlSuffix;
         const res = await request.post(
           `${url}/find${objToUrl(m.pageInfo)}${suffix}`,
           {
@@ -116,7 +113,7 @@ export default function (model, options = {}) {
         hideTableLoading();
         return res;
       } catch (err) {
-        console.log(err,343434)
+        console.log(err, 343434);
         hideTableLoading();
         return err;
       }
@@ -129,8 +126,8 @@ export default function (model, options = {}) {
       const { params } = options;
       if (m.isShowEditLoading) {
         message.error("不可重复点击！");
-        return
-      } 
+        return;
+      }
       showTableLoading();
       showEditLoading();
       try {
@@ -180,12 +177,9 @@ export default function (model, options = {}) {
         async onOk() {
           showTableLoading();
           try {
+            console.log(m.selectedRowKeys, 55555);
             const res = await request.post(`${url}/remove${urlSuffix}`, {
-              ids: m.selectedRowKeys.map((item) => {
-                return {
-                  [m.primaryKey]: item,
-                };
-              }),
+              ids: m.selectedRowKeys.join(","),
             });
             message.success("删除成功");
             hideTableLoading();
