@@ -3,6 +3,11 @@ export default class DataModel {
   static tableName = "data_model";
   static primaryKey = "data_model_id";
   static modelCname = "数据模型";
+
+  static update = (params) => {
+    return request.post("/admin/sys/dataModel/update", params);
+  };
+
   static queryFieldMap = {
     data_model_name: {
       name: "data_model_name",
@@ -24,7 +29,6 @@ export default class DataModel {
       options: {
         link: {
           change: (formData, fieldMap, dataModel) => {
-            console.log("响应了 哈哈哈哈", formData, fieldMap, dataModel);
             if (formData.data_model_name === "xxx") {
               fieldMap.table_name.notShow = true;
             } else {

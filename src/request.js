@@ -40,7 +40,15 @@
  // 拦截响应
  request.interceptors.response.use(
    (res) => {
-     return res.data;
+     const data = res.data
+     if(data.code >0) {
+      return data 
+     } else {
+      message.error(data.message)
+      return Promise.reject(res);
+     }
+
+  
    },
    (error) => {
     message.error('网络错误，请重试')

@@ -166,7 +166,9 @@ export default function (model, options = {}) {
         } else {
           message.success("创建成功");
         }
+        
         m.updateParams = res.data;
+        console.log(m.updateParams,5453553)
         hideEditLoading();
         if (m.isPage) {
           await find();
