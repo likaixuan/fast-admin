@@ -9,26 +9,47 @@
             <Crud :dataModel="DataModelM.DataModelFieldM">
               <!-- 创建字段快捷选项 -->
               <template v-slot:btnPanelAfter>
-                <el-card style="margin-bottom:16px;">
-                   <a-space>
-                  <el-button size="default" @click="showCreateFieldPanel('text')"
-                    >创建文本</el-button
-                  >
-                  <el-button size="default" @click="showCreateFieldPanel('select')"
-                    >创建下拉框</el-button
-                  >
-                  <el-button size="default" @click="showCreateFieldPanel('textarea')"
-                    >创建文本域</el-button
-                  >
-                  <el-button size="default">创建富文本</el-button>
-                  <el-button size="default">单图</el-button>
-                  <el-button size="default">多图</el-button>
-                  <el-button size="default">单文件</el-button>
-                  <el-button size="default">多文件</el-button>
-                  <el-button size="default">关联</el-button>
-                </a-space>
+                <el-card style="margin-bottom: 16px">
+                  <a-space>
+                    <el-button
+                      size="default"
+                      @click="showCreateFieldPanel('text')"
+                      >创建文本</el-button
+                    >
+                    <el-button
+                      size="default"
+                      @click="showCreateFieldPanel('select')"
+                      >创建下拉框</el-button
+                    >
+                    <el-button
+                      size="default"
+                      @click="showCreateFieldPanel('textarea')"
+                      >创建文本域</el-button
+                    >
+                    <el-button size="default">创建富文本</el-button>
+                    <el-button size="default">单图</el-button>
+                    <el-button size="default">多图</el-button>
+                    <el-button size="default">单文件</el-button>
+                    <el-button size="default">多文件</el-button>
+                    <el-button size="default">关联</el-button>
+                  </a-space>
                 </el-card>
-               
+              </template>
+
+              <!-- select 状态 -->
+              <template
+                v-slot:updateFormAfter
+                v-if="
+                  DataModelM.DataModelFieldM.isUpdate &&
+                  DataModelM.DataModelFieldM.updateParams.input_type ===
+                    'select'
+                "
+              >
+                <el-tabs type="card">
+                  <el-tab-pane label="状态管理">
+                       <Crud :dataModel="DataModelM.DataModelFieldM.DataModelFieldStateM" />
+                  </el-tab-pane></el-tabs
+                >
               </template>
             </Crud>
           </el-tab-pane>
@@ -42,6 +63,8 @@ import { createVNode } from "vue";
 import useM from "@/hooks/useM.js";
 import DataModel from "@/model/DataModel";
 import DataModelField from "@/model/DataModelField";
+import DataModelFieldState from "@/model/DataModelFieldState";
+
 import Module from "@/model/Module";
 import Crud from "components/bus/crud/index.vue";
 import { message } from "ant-design-vue";
@@ -53,6 +76,10 @@ let DataModelM = useM(DataModel, {
     canActions: {
       add: false,
     },
+    DataModelFieldStateM:useM(DataModelFieldState,{
+      buttonSize:'small',
+      isShowQueryPanel: false
+    })
   }),
 });
 
