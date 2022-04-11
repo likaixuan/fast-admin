@@ -1,37 +1,62 @@
 <template>
   <div class="curd">
-    <dyForm :dataModel="dataModel" name="query" v-if="dataModel.isShowQueryPanel"></dyForm>
-    <!-- 操作区域 -->
-    <div class="btn-panel">
-      <a-button :size="dataModel.buttonSize" @click="findOrFindAll">查询</a-button>
-      <a-button :size="dataModel.buttonSize" type="primary" @click="dataModel.showEditPanel()"
-        >新增</a-button
-      >
-      <a-button :size="dataModel.buttonSize" type="primary" danger @click="dataModel.remove()"
-        >批量删除</a-button
-      >
+    <div v-show="!dataModel.isShowEditPanel">
+      <dyForm
+        :dataModel="dataModel"
+        name="query"
+        v-if="dataModel.isShowQueryPanel"
+      ></dyForm>
+      <!-- 操作区域 -->
+      <div class="btn-panel">
+        <el-button :size="dataModel.buttonSize" @click="findOrFindAll"
+          >查询</el-button
+        >
+        <el-button
+          :size="dataModel.buttonSize"
+          v-if="dataModel.canActions.add"
+          type="primary"
+          @click="dataModel.showEditPanel()"
+          >新增</el-button
+        >
+        <el-button
+          :size="dataModel.buttonSize"
+          v-if="dataModel.canActions.remove"
+          type="danger"
+          danger
+          @click="dataModel.remove()"
+          >批量删除</el-button
+        >
+        <slot name="btnPanelEnd"> </slot>
+      </div>
+      <slot name="btnPanelAfter"> </slot>
+      <!-- 表格 -->
+      <dyTable :dataModel="dataModel"></dyTable>
     </div>
-    <!-- 表格 -->
-    <dyTable :dataModel="dataModel"></dyTable>
 
     <!-- 编辑面板  -->
     <div class="curd-edit-panel" v-if="dataModel.isShowEditPanel">
       <!-- <a-divider /> -->
       <a-space>
-        <a-button @click="dataModel.isShowEditPanel = false" :size="dataModel.buttonSize">返回</a-button>
-        <a-button
+        <el-button
+          v-if="dataModel.canActions.back"
+          @click="dataModel.isShowEditPanel = false"
+          :size="dataModel.buttonSize"
+          >返回</el-button
+        >
+        <el-button
+          v-if="dataModel.canActions.save"
           type="primary"
           @click="dataModel.save()"
-          :loading="dataModel.isShowEditLoading" :size="dataModel.buttonSize"
-          >保存</a-button
+          :loading="dataModel.isShowEditLoading"
+          :size="dataModel.buttonSize"
+          >保存</el-button
         ></a-space
       >
       <div class="edit-form-wrapper">
         <dyForm :dataModel="dataModel" name="update"></dyForm>
       </div>
-      <div style="margin-top:24px;">
-      <slot name="editPanelBottom"> </slot>
-
+      <div style="margin-top: 24px">
+        <slot name="updateFormAfter"> </slot>
       </div>
     </div>
     <!-- 编辑 -->
@@ -45,12 +70,12 @@
     <div class="edit-panel-content-wrapper"></div>
       <a-spin :spinning="dataModel.isShowEditLoading">
         <a-space>
-          <a-button @click="dataModel.isShowEditPanel = false">取消</a-button>
-          <a-button
+          <el-button @click="dataModel.isShowEditPanel = false">取消</el-button>
+          <el-button
             type="primary"
             @click="dataModel.save()"
             :loading="dataModel.isShowEditLoading"
-            >保存</a-button
+            >保存</el-button
           >
         </a-space>
         <div class="edit-form-wrapper">
@@ -97,13 +122,13 @@ findOrFindAll();
 }
 
 .curd-edit-panel {
-  position: absolute;
-  top: 0px;
-  bottom: 0px;
-  left: 0px;
-  right: 0px;
-  z-index: 999;
-  padding: 24px 32px;
+  // position: absolute;
+  // top: 0px;
+  // bottom: 0px;
+  // left: 0px;
+  // right: 0px;
+  // z-index: 999;
+  // padding: 24px 32px;
   background: white;
 }
 

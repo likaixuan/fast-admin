@@ -5,8 +5,10 @@ import { message } from "ant-design-vue";
 import { Modal } from "ant-design-vue";
 import { ExclamationCircleOutlined } from "@ant-design/icons-vue";
 export default function (model, options = {}) {
-  let url = model.url || '/common/base';
-  let urlSuffix = model.urlSuffix || `?tableName=${model.tableName}&primaryKey=${model.primaryKey}`;
+  let url = model.url || "/common/base";
+  let urlSuffix =
+    model.urlSuffix ||
+    `?tableName=${model.tableName}&primaryKey=${model.primaryKey}`;
   let m = reactive({
     queryParams: {},
     updateParams: {},
@@ -17,7 +19,7 @@ export default function (model, options = {}) {
     isShowEditLoading: false,
     isShowEditPanel: false,
     isShowQueryPanel: true,
-    buttonSize: "middle", // large | middle | small
+    buttonSize: "default", // large | default | small
     queryFieldMap: model.queryFieldMap || {},
     updateFieldMap: model.updateFieldMap || {},
     listFieldMap: model.listFieldMap || {},
@@ -31,7 +33,7 @@ export default function (model, options = {}) {
       const $parent = m.$parent;
       if ($parent.isUpdate) {
         return {
-          [$parent.primaryKey]: $parent.updateParams[$parent.primaryKey]
+          [$parent.primaryKey]: $parent.updateParams[$parent.primaryKey],
         };
       } else {
         return {};
@@ -52,6 +54,13 @@ export default function (model, options = {}) {
       return m.isUpdate ? `编辑${model.modelCname}` : `创建${model.modelCname}`;
     }),
     ...options,
+    canActions: {
+      add: true,
+      remove: true,
+      save: true,
+      back: true,
+      ...(options.canActions || {}),
+    },
   });
 
   for (let key in options) {
@@ -112,120 +121,112 @@ export default function (model, options = {}) {
   ).bind(m);
 
   // 分页查询
-  const find = (
-    options.find ||
-    async function (options = {}) {
-      const { params } = options;
-      showTableLoading();
-      try {
-        let suffix = urlSuffix ? "&" + urlSuffix.slice(1) : urlSuffix;
-        const res = await request.post(
-          `${url}/find${objToUrl(m.pageInfo)}${suffix}`,
-          {
-            ...m.addQueryParams,
-            ...m.queryParams,
-            ...params,
-            ...m.pParams,
-          }
-        );
-        m.tableData = res.data.list;
-        m.pageInfo.total = res.data.total;
-        m.pageInfo.pageSize = Number(res.data.pageSize);
-
-        m.pageInfo.current = Number(res.data.current);
-
-        hideTableLoading();
-        return res;
-      } catch (err) {
-        console.log(err, 343434);
-        hideTableLoading();
-        return err;
-      }
-    }
-  ).bind(m);
-
-  const save =
-    options.save ||
-    async function (options = {}) {
-      const { params } = options;
-      if (m.isShowEditLoading) {
-        message.error("不可重复点击！");
-        return;
-      }
-      showTableLoading();
-      showEditLoading();
-      try {
-        const res = await request.post(`${url}/update${urlSuffix}`, {
-          ...m.addUpdateParams,
-          ...m.updateParams,
+  const find = async function (options = {}) {
+    const { params } = options;
+    showTableLoading();
+    try {
+      let suffix = urlSuffix ? "&" + urlSuffix.slice(1) : urlSuffix;
+      const res = await request.post(
+        `${url}/find${objToUrl(m.pageInfo)}${suffix}`,
+        {
+          ...m.addQueryParams,
+          ...m.queryParams,
           ...params,
           ...m.pParams,
-        });
-        if (m.isUpdate) {
-          message.success("保存成功");
-        } else {
-          message.success("创建成功");
         }
-        
-        m.updateParams = res.data;
-        console.log(m.updateParams,5453553)
-        hideEditLoading();
-        if (m.isPage) {
-          await find();
-        } else {
-          await findAll();
-        }
-        return res;
-      } catch (err) {
-        console.log(err, 4354545);
-        hideEditLoading();
-        hideTableLoading();
-        return err;
+      );
+      m.tableData = res.data.list;
+      m.pageInfo.total = res.data.total;
+      m.pageInfo.pageSize = Number(res.data.pageSize);
+
+      m.pageInfo.current = Number(res.data.current);
+
+      hideTableLoading();
+      return res;
+    } catch (err) {
+      console.log(err, 343434);
+      hideTableLoading();
+      return err;
+    }
+  }.bind(m);
+
+  const save = async function (options = {}) {
+    const { params } = options;
+    if (m.isShowEditLoading) {
+      message.error("不可重复点击！");
+      return;
+    }
+    showTableLoading();
+    showEditLoading();
+    try {
+      const res = await request.post(`${url}/update${urlSuffix}`, {
+        ...m.addUpdateParams,
+        ...m.updateParams,
+        ...params,
+        ...m.pParams,
+      });
+      if (m.isUpdate) {
+        message.success("保存成功");
+      } else {
+        message.success("创建成功");
       }
-    };
+
+      m.updateParams = res.data;
+      console.log(m.updateParams, 5453553);
+      hideEditLoading();
+      if (m.isPage) {
+        await find();
+      } else {
+        await findAll();
+      }
+      return res;
+    } catch (err) {
+      console.log(err, 4354545);
+      hideEditLoading();
+      hideTableLoading();
+      return err;
+    }
+  };
 
   // 删除n条数据
-  const remove =
-    options.remove ||
-    async function (options = {}) {
-      const { params } = options;
-      const selectedRowKeysLen = m.selectedRowKeys.length;
-      if (selectedRowKeysLen === 0) {
-        message.warning("请选中一条记录");
-        return;
-      }
-      Modal.confirm({
-        title: `提示`,
-        icon: createVNode(ExclamationCircleOutlined),
-        content: `当前共选中了${selectedRowKeysLen}条记录，您确定要删除吗？`,
-        okText: "确定",
-        okType: "danger",
-        cancelText: "取消",
-        async onOk() {
-          showTableLoading();
-          try {
-            console.log(m.selectedRowKeys, 55555);
-            const res = await request.post(`${url}/remove${urlSuffix}`, {
-              ids: m.selectedRowKeys.join(","),
-            });
-            message.success("删除成功");
-            hideTableLoading();
-            if (m.isPage) {
-              await find();
-            } else {
-              await findAll();
-            }
-            return res;
-          } catch (err) {
-            hideTableLoading();
-            return err;
+  const remove = async function (options = {}) {
+    const { params } = options;
+    const selectedRowKeysLen = m.selectedRowKeys.length;
+    if (selectedRowKeysLen === 0) {
+      message.warning("请选中一条记录");
+      return;
+    }
+    Modal.confirm({
+      title: `提示`,
+      icon: createVNode(ExclamationCircleOutlined),
+      content: `当前共选中了${selectedRowKeysLen}条记录，您确定要删除吗？`,
+      okText: "确定",
+      okType: "danger",
+      cancelText: "取消",
+      async onOk() {
+        showTableLoading();
+        try {
+          const res = await request.post(`${url}/remove${urlSuffix}`, {
+            ids: m.selectedRowKeys.join(","),
+          });
+          message.success("删除成功");
+          hideTableLoading();
+          if (m.isPage) {
+            await find();
+          } else {
+            await findAll();
           }
-        },
-        onCancel() {
-          message.info("已取消删除");
-        },
-      });
-    };
+          return res;
+        } catch (err) {
+          hideTableLoading();
+          return err;
+        }
+      },
+      onCancel() {
+        message.info("已取消删除");
+      },
+    });
+  };
 
   return reactive({
     ...toRefs(m),
