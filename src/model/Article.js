@@ -1,7 +1,7 @@
 import request from "@/request";
 export default class Article {
   static tableName = "article";
-  static primaryKey = "article_id";
+  static primaryKey = "_id";
   static modelCname = "文章管理";
 
   // 查询表单
