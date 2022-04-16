@@ -65,7 +65,7 @@ const logo =
     .login-left {
       height: 100%;
       flex: 1.5;
-      background: url("../assets/image/login.png") no-repeat 0 0;
+      background: url("/img/login.png") no-repeat 0 0;
       background-size: 100% 100% cover;
       background-size: cover;
       position: relative;

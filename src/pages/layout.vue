@@ -2,8 +2,8 @@
   <div class="layout">
     <div class="layout-header">
     <div class="layout-header-logo">
-      <a-avatar :size="40" :src="logo" />
-      <div class="layout-header-logo-name">野狗大学</div>
+      <a-avatar :size="40" src="/img/dog.jpg" />
+      <div class="layout-header-logo-name">野狗低代码</div>
     </div>
     <a-popover placement="bottom">
       <template #content>
@@ -11,7 +11,7 @@
         <div><a-button type="text" block><template #icon><logout-outlined /></template>其他操作</a-button></div>
       </template>
       <div class="layout-header-account">
-        <a-avatar :src="logo" />
+        <a-avatar src="/img/avatar.png" />
         <div class="layout-header-account-name">
           <span>admin </span>
           <a-space>

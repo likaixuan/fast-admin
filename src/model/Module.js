@@ -1,6 +1,7 @@
 export default class Module {
   static tableName = "module";
   static primaryKey = "module_id";
+  static parentIdName = 'p_module_id'
   static modelCname = "模块管理";
 
   // 查询表单
@@ -23,6 +24,21 @@ export default class Module {
       name: "module_url",
       type: "input",
       label: "模块地址",
+    },
+    p_module_id: {
+      name: "p_module_id",
+      type: "cascader",
+      label: "上级模块",
+      options: {
+        list: [
+          {
+            module_name:'sb',
+            module_id:'xxx'
+          }
+        ],
+        labelName:'module_name',
+        valueName:'module_id'
+      },
     },
     module_type: {
       name: "module_url",

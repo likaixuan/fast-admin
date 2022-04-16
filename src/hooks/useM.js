@@ -1,6 +1,6 @@
 import { reactive, toRefs, computed, createVNode } from "vue";
 import request from "@/request";
-import { check, deepCopy, getIds, objToUrl } from "@/utils/util.js";
+import { check,arrToTree, deepCopy, getIds, objToUrl } from "@/utils/util.js";
 import { message } from "ant-design-vue";
 import { Modal } from "ant-design-vue";
 import { ExclamationCircleOutlined } from "@ant-design/icons-vue";
@@ -15,6 +15,7 @@ export default function (model, options = {}) {
     addUpdateParams: {},
     addQueryParams: {},
     tableData: [],
+    treeData:[],
     isShowTableLoading: false,
     isShowEditLoading: false,
     isShowEditPanel: false,
@@ -99,7 +100,6 @@ export default function (model, options = {}) {
 
   // 查询全部
   const findAll = (
-    options.findAll ||
     async function (options = {}) {
       const { params } = options;
       showTableLoading();
@@ -115,6 +115,39 @@ export default function (model, options = {}) {
         return res;
       } catch (err) {
         hideTableLoading();
+        return err;
+      }
+    }
+  ).bind(m);
+
+  // 查询树
+  const findTree =  (
+ 
+    async function (options = {}) {
+      if(!model.parentIdName) {
+        alert('父id名未制定')
+        return
+      }
+      const { params } = options;
+      // showTableLoading();
+      try {
+        const res = await request.post(`${url}/findAll${urlSuffix}`, {
+          ...m.addQueryParams,
+          ...m.queryParams,
+          ...params,
+          ...m.pParams,
+        });
+        m.treeData = arrToTree({
+          data:res.data,
+          key:model.primaryKey,
+          pIdName:model.parentIdName
+        })
+        console.log(m.treeData,5555)
+        // hideTableLoading();
+        return res;
+      } catch (err) {
+        // hideTableLoading();
+        console.log(err,34343)
         return err;
       }
     }
@@ -231,6 +264,7 @@ export default function (model, options = {}) {
   return reactive({
     ...toRefs(m),
     findAll,
+    findTree,
     find,
     save,
     remove,
