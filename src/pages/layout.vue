@@ -33,7 +33,7 @@
         >
           <a-sub-menu key="sys">
             <template #title>系统管理</template>
-            <a-menu-item key="1">角色管理</a-menu-item>
+            <a-menu-item key="1" @click="toPage('/role')">角色管理</a-menu-item>
             <a-menu-item key="2" @click="toPage('/module')"
               >模块管理</a-menu-item
             >
@@ -58,7 +58,7 @@ import { ref, reactive } from "vue";
 import { DownOutlined,LogoutOutlined } from '@ant-design/icons-vue';
 const router = useRouter();
 let collapsed = false;
-let selectedKeys = ["4"];
+let selectedKeys = ["2"];
 let openKeys = ["sys"];
 
 const toPage = (path) => {
