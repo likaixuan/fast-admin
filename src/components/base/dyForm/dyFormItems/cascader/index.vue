@@ -90,7 +90,7 @@ const onValChange = (e) => {
   if (e && e.length > 0) {
     props.formData[name] = e[e.length - 1];
   } else {
-    props.formData[name] = "";
+   delete props.formData[name]
   }
   emit("change", props.formData[name]);
 };
