@@ -1,6 +1,6 @@
 import { reactive, toRefs, computed, createVNode } from "vue";
 import request from "@/request";
-import { check,arrToTree, deepCopy, getIds, objToUrl } from "@/utils/util.js";
+import { check, arrToTree, deepCopy, getIds, objToUrl } from "@/utils/util.js";
 import { message } from "ant-design-vue";
 import { Modal } from "ant-design-vue";
 import { ExclamationCircleOutlined } from "@ant-design/icons-vue";
@@ -15,7 +15,7 @@ export default function (model, options = {}) {
     addUpdateParams: {},
     addQueryParams: {},
     tableData: [],
-    treeData:[],
+    treeData: [],
     isShowTableLoading: false,
     isShowEditLoading: false,
     isShowEditPanel: false,
@@ -70,6 +70,12 @@ export default function (model, options = {}) {
     }
   }
 
+  // 钩子
+  let hooks = {};
+  const mountHook = function (name, fun) {
+    hooks[name] = fun;
+  };
+
   // 表格loading
   const showTableLoading = function () {
     m.isShowTableLoading = true;
@@ -87,71 +93,72 @@ export default function (model, options = {}) {
   };
 
   // 是否显示编辑区域
-  const showEditPanel = function (options = {}) {
+  const showEditPanel = async function (options = {}) {
+    if (hooks.beforeShowEditPanel) {
+      await hooks.beforeShowEditPanel(options);
+    }
     const { addParams = {} } = options;
     m.updateParams = {
       ...addParams,
     };
     m.isShowEditPanel = true;
+    if (hooks.after) {
+      await hooks.afterShowEditPanel(options);
+    }
   };
   const hideEditPanel = function () {
     m.isShowEditPanel = false;
   };
 
   // 查询全部
-  const findAll = (
-    async function (options = {}) {
-      const { params } = options;
-      showTableLoading();
-      try {
-        const res = await request.post(`${url}/findAll${urlSuffix}`, {
-          ...m.addQueryParams,
-          ...m.queryParams,
-          ...params,
-          ...m.pParams,
-        });
-        m.tableData = res.data;
-        hideTableLoading();
-        return res;
-      } catch (err) {
-        hideTableLoading();
-        return err;
-      }
+  const findAll = async function (options = {}) {
+    const { params } = options;
+    showTableLoading();
+    try {
+      const res = await request.post(`${url}/findAll${urlSuffix}`, {
+        ...m.addQueryParams,
+        ...m.queryParams,
+        ...params,
+        ...m.pParams,
+      });
+      m.tableData = res.data;
+      hideTableLoading();
+      return res;
+    } catch (err) {
+      hideTableLoading();
+      return err;
     }
-  ).bind(m);
+  }.bind(m);
 
   // 查询树
-  const findTree =  (
- 
-    async function (options = {}) {
-      if(!model.parentIdName) {
-        alert('父id名未制定')
-        return
-      }
-      const { params } = options;
-      // showTableLoading();
-      try {
-        const res = await request.post(`${url}/findAll${urlSuffix}`, {
-          ...m.addQueryParams,
-          ...m.queryParams,
-          ...params,
-          ...m.pParams,
-        });
-        m.treeData = arrToTree({
-          data:res.data,
-          key:model.primaryKey,
-          pIdName:model.parentIdName
-        })
-        console.log(m.treeData,5555)
-        // hideTableLoading();
-        return res;
-      } catch (err) {
-        // hideTableLoading();
-        console.log(err,34343)
-        return err;
-      }
+  const findTree = async function (options = {}) {
+    if (!model.parentIdName) {
+      alert("父id名未制定");
+      return;
     }
-  ).bind(m);
+    const { params } = options;
+    // showTableLoading();
+    try {
+      const res = await request.post(`${url}/findAll${urlSuffix}`, {
+        ...m.addQueryParams,
+        ...m.queryParams,
+        ...params,
+        ...m.pParams,
+      });
+      m.treeData = arrToTree({
+        data: res.data,
+        key: model.primaryKey,
+        pIdName: model.parentIdName,
+      });
+      console.log(m.treeData, 5555);
+      // hideTableLoading();
+      return res;
+    } catch (err) {
+      // hideTableLoading();
+      console.log(err, 34343);
+      return err;
+    }
+  }.bind(m);
 
   // 分页查询
   const find = async function (options = {}) {
@@ -207,10 +214,14 @@ export default function (model, options = {}) {
       m.updateParams = res.data;
       console.log(m.updateParams, 5453553);
       hideEditLoading();
-      if (m.isPage) {
-        await find();
+      if (!m.isTree) {
+        if (m.isPage) {
+          await find();
+        } else {
+          await findAll();
+        }
       } else {
-        await findAll();
+        await findTree();
       }
       return res;
     } catch (err) {
@@ -223,16 +234,26 @@ export default function (model, options = {}) {
 
   // 删除n条数据
   const remove = async function (options = {}) {
-    const { params } = options;
+    const { params, record } = options;
+    let tip = "您确定要删除当前记录吗";
+    let ids =''
     const selectedRowKeysLen = m.selectedRowKeys.length;
     if (selectedRowKeysLen === 0) {
-      message.warning("请选中一条记录");
-      return;
+      if (record) {
+        ids = record[m.primaryKey]
+      } else {
+        message.warning("请选中一条记录");
+        return;
+      }
+    } else {
+      tip = `当前共选中了${selectedRowKeysLen}条记录，您确定要删除吗？`
+      ids =  m.selectedRowKeys.join(",")
     }
+
     Modal.confirm({
       title: `提示`,
       icon: createVNode(ExclamationCircleOutlined),
-      content: `当前共选中了${selectedRowKeysLen}条记录，您确定要删除吗？`,
+      content: tip,
       okText: "确定",
       okType: "danger",
       cancelText: "取消",
@@ -240,15 +261,20 @@ export default function (model, options = {}) {
         showTableLoading();
         try {
           const res = await request.post(`${url}/remove${urlSuffix}`, {
-            ids: m.selectedRowKeys.join(","),
+            ids,
           });
           message.success("删除成功");
           hideTableLoading();
-          if (m.isPage) {
-            await find();
+          if (!m.isTree) {
+            if (m.isPage) {
+              await find();
+            } else {
+              await findAll();
+            }
           } else {
-            await findAll();
+            await findTree();
           }
+
           return res;
         } catch (err) {
           hideTableLoading();
@@ -266,6 +292,7 @@ export default function (model, options = {}) {
     findAll,
     findTree,
     find,
+    mountHook,
     save,
     remove,
     showTableLoading,
