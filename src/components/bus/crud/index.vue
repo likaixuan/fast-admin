@@ -4,6 +4,7 @@
       <dyForm
         :dataModel="dataModel"
         name="query"
+        @change="onDyFormChange"
         v-if="dataModel.isShowQueryPanel"
       ></dyForm>
       <!-- 操作区域 -->
@@ -53,7 +54,11 @@
         ></a-space
       >
       <div class="edit-form-wrapper">
-        <dyForm :dataModel="dataModel" name="update"></dyForm>
+        <dyForm
+          :dataModel="dataModel"
+          @change="onDyFormChange"
+          name="update"
+        ></dyForm>
       </div>
       <div style="margin-top: 24px">
         <slot name="updateFormAfter"> </slot>
@@ -89,18 +94,27 @@
 <script setup>
 import dyForm from "components/base/dyForm/index.vue";
 import dyTable from "components/base/dyTable/index.vue";
-import { defineProps } from "vue";
+import { defineProps,defineEmits } from "vue";
 const props = defineProps({
   dataModel: Object,
 });
 const findOrFindAll = () => {
-  if (props.dataModel.isPage) {
-    props.dataModel.find();
+  if (!props.dataModel.isTree) {
+    if (props.dataModel.isPage) {
+      props.dataModel.find();
+    } else {
+    }
   } else {
-    props.dataModel.findAll();
+      // props.dataModel.findTree();
+
   }
 };
 findOrFindAll();
+
+const emit = defineEmits(["formChange"]);
+const onDyFormChange = (...args) => {
+  emit('formChange',...args)
+}
 </script>
 <style lang="less">
 .curd {

@@ -19,13 +19,13 @@ const props = defineProps({
   formData: Object,
 });
 const name = props.info.name
-const link = props.info.options && props.info.options.link;
+const event = props.info.options && props.info.options.event;
 
 
 const emit = defineEmits(["change"]);
 const onValChange = (e) => {
-  if (link && link.change) {
-    link.change(props.formData, props.fieldMap, props.dataModel);
+  if (event && event.change) {
+    event.change(props.formData, props.fieldMap, props.dataModel);
   }
   emit("change", props.formData[name]);
 };

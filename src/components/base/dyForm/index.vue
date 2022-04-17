@@ -40,8 +40,9 @@ const formData = computed(() => {
 const emit = defineEmits(["change"]);
 const onFormItemChange = (item, e) => {
   emit("change", {
-    type: "dyFromChange",
+    type: "dyFormChange",
     name: item.name,
+    scene:props.name,
     value: e,
   });
 };
