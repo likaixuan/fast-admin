@@ -4,46 +4,57 @@ export default class ModuleDm {
   static parentIdName = "p_module_dm_id";
   static modelCname = "数据模型对象";
 
-  // 查询表单
-  static queryFieldMap = {};
-
-  // 编辑或者新增
-  static updateFieldMap = {
-    data_model_id: {
+  static fields = [
+     {
         name: "data_model_id",
-        type: "select",
+        inputType: "select",
         label: "引用数据模型",
-        options: {
+        useScene:"update||create",
+        inputOptions: {
           list: [],
           labelName:'data_model_name',
           valueName:'data_model_id'
         },
       },
-    module_dm_name: {
+     {
       name: "module_dm_name",
-      type: "input",
+      inputType: "input",
       label: "数据模型名",
+      useScene:"update||create",
+      inputOptions:{
+        
+      }
     },
-    module_dm_code: {
+     {
       name: "module_dm_code",
-      type: "input",
+      inputType: "input",
       label: "模型编码",
+      useScene:"update||create",
+      inputOptions:{
+        
+      }
     },
 
-    create_time: {
+    {
       name: "create_time",
-      type: "input",
+      inputType: "input",
       label: "创建时间",
-      disabled: true,
+      useScene:"update",
+     
+      inputOptions:{
+        disabled: true,
+      }
     },
-    update_time: {
+     {
       name: "update_time",
-      type: "input",
+      inputType: "input",
       label: "修改时间",
+      useScene:"update",
       disabled: true,
+      inputOptions:{
+        disabled: true,
+      }
     },
-  };
+  ]
 
-  // 表格字段
-  static listFieldMap = {};
 }

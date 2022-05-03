@@ -1,6 +1,5 @@
 <template>
   <div>
-    {{ModuleM.queryParams}}
     <Crud :dataModel="ModuleM">
       <template
         v-slot:updateFormAfter
@@ -85,8 +84,7 @@ ModuleM.mountHook("beforeShowEditPanel", async function (options) {
   if (options.addParams) {
     if (options.addParams.module_type === Module.MODULE_TYPE_MODULE) {
       await Promise.all([ModuleM.ModuleDmM.findTree(), DataModelM.findAll()]);
-      ModuleM.ModuleDmM.updateFieldMap.data_model_id.options.list =
-        DataModelM.tableData;
+      ModuleM.ModuleDmM.setFieldOptions('data_model_id', DataModelM.tableData)
     }
   }
   console.log(options, 5555);

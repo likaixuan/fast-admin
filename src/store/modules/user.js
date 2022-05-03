@@ -95,7 +95,6 @@ export const useUserStore = defineStore({
       })
       const genRouter = (arr) => {
         return arr.map((item) => {
-          console.log(item,6432)
           let component = dyModuleMap[item.module_url] || {};
           component.meta = component.meta || {};
           // component.meta.icon = item.modulePic;
@@ -150,7 +149,6 @@ export const useUserStore = defineStore({
         });
       }
       const arr = genRouter(ModuleM.treeData)
-      console.log(arr,'9999')
       const commonStore = useCommonStore()
       commonStore.setRoutes(arr)
       return
