@@ -21,10 +21,8 @@ export default function (model, options = {}) {
     isShowEditPanel: false,
     isShowQueryPanel: true,
     buttonSize: "default", // large | default | small
-    queryFieldMap: model.queryFieldMap || {},
-    updateFieldMap: model.updateFieldMap || {},
-    listFieldMap: model.listFieldMap || {},
     primaryKey: model.primaryKey,
+    fields:model.fields || [],
     selectedRowKeys: [],
     $parent: null,
     pParams: computed(() => {
@@ -91,6 +89,14 @@ export default function (model, options = {}) {
   const hideEditLoading = function () {
     m.isShowEditLoading = false;
   };
+
+  // 设置field Options
+  const setFieldOptions = (name,list) =>{
+    const index = m.fields.findIndex(item=>item.name===name)
+    if(index !==-1) {
+      m.fields[index].inputOptions.list = list
+    }
+  }
 
   // 是否显示编辑区域
   const showEditPanel = async function (options = {}) {
@@ -247,7 +253,9 @@ export default function (model, options = {}) {
       }
     } else {
       tip = `当前共选中了${selectedRowKeysLen}条记录，您确定要删除吗？`
-      ids =  m.selectedRowKeys.join(",")
+      ids =  m.selectedRowKeys.map((item)=>{
+        return item[m.primaryKey]
+      }).join(",")
     }
 
     Modal.confirm({
@@ -301,5 +309,6 @@ export default function (model, options = {}) {
     hideEditLoading,
     showEditPanel,
     hideEditPanel,
+    setFieldOptions
   });
 }

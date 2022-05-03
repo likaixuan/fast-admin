@@ -1,12 +1,9 @@
 <template>
-  <el-select v-model="itemValue" v-bind="inputOptions" @change="onValChange">
-    <el-option
-      v-for="item in inputOptions.list"
-      :key="item.value"
-      :label="item.label"
-      :value="item.value"
-    />
-  </el-select>
+  <el-input
+    v-model="itemValue"
+    v-bind="inputOptions"
+    @change="onValChange"
+  />
 </template>
 <script setup>
 import { defineProps, computed } from "vue";
@@ -14,18 +11,19 @@ import { defineProps, computed } from "vue";
 const props = defineProps({
   info: Object,
   modelValue: {
-    type: [String, Number],
+    type: String,
     default() {
       return "";
     },
   },
 });
 // 默认值
-const inputOptions = computed(() => {
+const inputOptions = computed(()=>{
   return {
     ...props.info.inputOptions,
-  };
-});
+    type:'textarea'
+  }
+})
 // 事件相关
 const emit = defineEmits(["change", "update:modelValue"]);
 let itemValue = computed({
@@ -36,8 +34,7 @@ let itemValue = computed({
 });
 
 const onValChange = (val) => {
-  console.log(val,44234234)
-  emit("change", val);
+  emit("change",val);
 };
 </script>
 <style lang="less" scoped></style>

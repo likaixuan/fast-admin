@@ -1,36 +1,43 @@
 <template>
-  <a-form-item :label="info.label" :name="name" :rules="info.rules || []">
-    <a-cascader
-      v-model:value="val"
-      :placeholder="info.options && info.options.placeholder"
-      :disabled="info.disabled"
-      :options="info.options.list || []"
-      :fieldNames="{
-        label: info.options.labelName || 'label',
-        value: info.options.valueName || 'value',
-        children: info.options.childrenName || 'children',
-      }"
-      changeOnSelect
-      @change="onValChange"
-    />
-  </a-form-item>
+  <el-cascader
+    v-model="itemValue"
+    v-bind="inputOptions"
+    clearable
+  />
 </template>
 <script setup>
-import { defineProps, ref, watch } from "vue";
-import { func } from "_vue-types@3.0.2@vue-types";
+import { optionProps } from "ant-design-vue/lib/vc-mentions/src/Option";
+import { defineProps, computed } from "vue";
 
 const props = defineProps({
   info: Object,
-  name: String,
-  dataModel: Object,
-  fieldMap: Object,
-  formData: Object,
+  modelValue: {
+    type: String,
+    default() {
+      return "";
+    },
+  },
 });
 
-let val = ref([]);
-
-const name = props.info.name;
-const link = props.info.options && props.info.options.link;
+// 默认值
+const inputOptions = computed(() => {
+  const info = props.info
+  return {
+    clearable:true,
+    ...info.inputOptions,
+    options:info.inputOptions.list || [],
+    props: Object.assign(
+      {
+        checkStrictly:true,
+        emitPath:false,
+        label: "label",
+        value: "value",
+        children: "children",
+      },
+      props.info.inputOptions.props || {}
+    ),
+  };
+});
 
 // 通过子节点路径找寻父节点路径
 const searchTreePath = function (
@@ -61,38 +68,33 @@ const searchTreePath = function (
   return [];
 };
 
-// 监听表单变化 并根据该id设置val的路径
-watch(
-  () => props.formData[name],
-  (a, b) => {
-    if (!a) {
-      val.value = [];
-    } else {
-      let arr = searchTreePath(
-        props.info.options.list,
-        a,
-        props.info.options.valueName,
-        props.info.options.childrenName
-      );
-      val.value = arr
-    }
+// 事件相关
+const emit = defineEmits(["change", "update:modelValue"]);
+let itemValue = computed({
+  get: () => {
+    // console.log(props.modelValue,42323)
+    // if(!props.modelValue) {
+    //   return []
+    // } else {
+    //   const inputOptions = props.info.inputOptions
+    //   const arr=  searchTreePath(
+    //     inputOptions.list,
+    //     props.modelValue,
+    //     inputOptions.props.value,
+    //     inputOptions.props.children
+    //   );
+    //   console.log(arr,876)
+    //   return arr
+    // }
+    return props.modelValue
   },
-  {
-      immediate: true
-  }
-);
+  set: (val) => {
+    emit("update:modelValue", val);
+  },
+});
 
-const emit = defineEmits(["change"]);
-const onValChange = (e) => {
-  if (link && link.change) {
-    link.change(props.formData, props.fieldMap, props.dataModel);
-  }
-  if (e && e.length > 0) {
-    props.formData[name] = e[e.length - 1];
-  } else {
-   delete props.formData[name]
-  }
-  emit("change", props.formData[name]);
+const onValChange = (val) => {
+  emit("change", val);
 };
 </script>
 <style lang="less" scoped></style>

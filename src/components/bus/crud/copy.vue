@@ -1,11 +1,9 @@
 <template>
   <div class="curd">
     <div v-show="!dataModel.isShowEditPanel">
-      {{ dataModel.queryFields }}
       <dyForm
         :dataModel="dataModel"
-        :fields="queryFields"
-        v-model="dataModel.queryParams"
+        name="query"
         @change="onDyFormChange"
         v-if="dataModel.isShowQueryPanel"
       ></dyForm>
@@ -33,20 +31,7 @@
       </div>
       <slot name="btnPanelAfter"> </slot>
       <!-- 表格 -->
-      <dyTable
-        v-loading="dataModel.isShowTableLoading"
-        @onUpdateBtnClick="onUpdateBtnClick"
-        @selectionChange="handleSelectionChange"
-        :tableData="dataModel.tableData"
-        :fields="listFields"
-      ></dyTable>
-      <!-- 分页 -->
-      <el-pagination
-        :page-size="pagination.pageSize"
-        v-model:currentPage="pagination.current"
-        layout="prev, pager, next"
-        :total="pagination.total"
-      />
+      <dyTable :dataModel="dataModel"></dyTable>
     </div>
 
     <!-- 编辑面板  -->
@@ -71,17 +56,8 @@
       <div class="edit-form-wrapper">
         <dyForm
           :dataModel="dataModel"
-          :fields="updateFields"
-          v-model="dataModel.updateParams"
           @change="onDyFormChange"
-          v-if="dataModel.isUpdate"
-        ></dyForm>
-        <dyForm
-          :dataModel="dataModel"
-          :fields="createFields"
-          v-model="dataModel.updateParams"
-          @change="onDyFormChange"
-          v-else
+          name="update"
         ></dyForm>
       </div>
       <div style="margin-top: 24px">
@@ -118,53 +94,9 @@
 <script setup>
 import dyForm from "components/base/dyForm/index.vue";
 import dyTable from "components/base/dyTable/index.vue";
-import { defineProps, defineEmits,computed } from "vue";
-import useFields from "@/hooks/useFields";
+import { defineProps,defineEmits } from "vue";
 const props = defineProps({
   dataModel: Object,
-});
-
-const { fields: queryFields } = useFields({
-  fields: props.dataModel.fields,
-  scene: "query",
-});
-const { fields: updateFields } = useFields({
-  fields: props.dataModel.fields,
-  scene: "update",
-});
-const { fields: createFields } = useFields({
-  fields: props.dataModel.fields,
-  scene: "create",
-});
-const { fields: listFields } = useFields({
-  fields: props.dataModel.fields,
-  scene: "list",
-});
-
-
-// 处理选中
-const handleSelectionChange = function (selectedRowKeys) {
-  console.log(selectedRowKeys, 453434);
-  props.dataModel.selectedRowKeys = selectedRowKeys;
-};
-
-// 点击编辑
-const onUpdateBtnClick = function (rowData) {
-  props.dataModel.showEditPanel({
-    addParams: rowData,
-  });
-};
-
-// 分页
-const pagination = computed(() => {
-  const m = props.dataModel;
-  if (m.isPage) {
-    return {
-      total: m.pageInfo.total,
-      current: m.pageInfo.current,
-      "pageSize": m.pageInfo.pageSize,
-    };
-  } else false;
 });
 const findOrFindAll = () => {
   if (!props.dataModel.isTree) {
@@ -173,15 +105,16 @@ const findOrFindAll = () => {
     } else {
     }
   } else {
-    // props.dataModel.findTree();
+      // props.dataModel.findTree();
+
   }
 };
 findOrFindAll();
 
 const emit = defineEmits(["formChange"]);
 const onDyFormChange = (...args) => {
-  emit("formChange", ...args);
-};
+  emit('formChange',...args)
+}
 </script>
 <style lang="less">
 .curd {

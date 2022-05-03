@@ -1,33 +1,39 @@
 <template>
-  <a-form-item :label="info.label" :name="name" :rules="info.rules || []">
-    <a-input
-      v-model:value="formData[name]"
-      :placeholder="info.options && info.options.placeholder"
-      :disabled="info.disabled"
-      @change="onValChange"
-    />
-  </a-form-item>
+  <el-input
+    v-model="itemValue"
+    v-bind="inputOptions"
+    @change="onValChange"
+  />
 </template>
 <script setup>
-import { defineProps } from "vue";
+import { defineProps, computed } from "vue";
 
 const props = defineProps({
   info: Object,
-  name: String,
-  dataModel: Object,
-  fieldMap: Object,
-  formData: Object,
+  modelValue: {
+    type: String,
+    default() {
+      return "";
+    },
+  },
 });
-const name = props.info.name
-const event = props.info.options && props.info.options.event;
-
-
-const emit = defineEmits(["change"]);
-const onValChange = (e) => {
-  if (event && event.change) {
-    event.change(props.formData, props.fieldMap, props.dataModel);
+// 默认值
+const inputOptions = computed(()=>{
+  return {
+    ...props.info.inputOptions
   }
-  emit("change", props.formData[name]);
+})
+// 事件相关
+const emit = defineEmits(["change", "update:modelValue"]);
+let itemValue = computed({
+  get: () => props.modelValue,
+  set: (val) => {
+    emit("update:modelValue", val);
+  },
+});
+
+const onValChange = (val) => {
+  emit("change",val);
 };
 </script>
 <style lang="less" scoped></style>

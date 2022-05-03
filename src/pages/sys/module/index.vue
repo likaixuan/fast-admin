@@ -1,5 +1,6 @@
 <template>
   <div>
+    {{ModuleM.queryParams}}
     <Crud :dataModel="ModuleM">
       <template
         v-slot:updateFormAfter
@@ -122,9 +123,9 @@ const treeData = computed(() => {
 
 // 加载树形module
 ModuleM.findTree().then(() => {
-  ModuleM.queryFieldMap.p_module_id.options.list = ModuleM.treeData;
+  // ModuleM.queryFieldMap.p_module_id.options.list = ModuleM.treeData;
 
-  ModuleM.updateFieldMap.p_module_id.options.list = ModuleM.treeData;
+  ModuleM.setFieldOptions('p_module_id',ModuleM.treeData)
 });
 
 // 选择树节点

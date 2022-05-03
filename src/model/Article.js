@@ -4,39 +4,20 @@ export default class Article {
   static primaryKey = "_id";
   static modelCname = "文章管理";
 
-  // 查询表单
-  static queryFieldMap = {
-    title: {
+  static fields = [
+    {
       name: "title",
-      type: "input",
+      inputType: "input",
       label: "标题",
+      useScene:'query||update||create||list',
+      inputOptions: {},
     },
-  };
-
-  // 编辑或者新增
-  static updateFieldMap = {
-    title: {
-      name: "title",
-      type: "input",
-      label: "标题",
-    },
-    content: {
+    {
       name: "content",
-      type: "input",
+      inputType: "input",
       label: "内容",
+      useScene:'query||update||create||list',
+      inputOptions: {},
     },
-  };
-  // 表格字段
-  static listFieldMap = {
-    title: {
-      name: "title",
-      type: "input",
-      label: "标题",
-    },
-    content: {
-      name: "content",
-      type: "input",
-      label: "内容",
-    },
-  };
+  ];
 }

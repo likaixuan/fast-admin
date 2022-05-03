@@ -1,10 +1,31 @@
 import { createApp } from "vue";
-import { router } from "./router";
 import App from "./App.vue";
-import "ant-design-vue/dist/antd.css"; // or 'ant-design-vue/dist/antd.less'
-import Antd from "ant-design-vue";
-import ElementPlus from 'element-plus'
-import 'element-plus/dist/index.css'
-import dyFormItems from 'components/base/dyForm/dyFormItems/index.js'
+import "./plugins/tailwind"
+import { initPinia } from "./store"
+import { initVueRouter } from "./router";
+import { initElementPlus } from "./plugins/elementPlus";
+import { initAntDesignVue } from "./plugins/antDesignVue";
+import dyForm from "./components/base/dyForm"
+import dyTable from "./components/base/dyTable"
 
-createApp(App).use(router).use(Antd).use(ElementPlus).use(dyFormItems).mount("#app");
+import { useUserStore } from "@/store/modules/user";
+
+const init = async () => {
+    const app = createApp(App)
+    initPinia(app)
+    initElementPlus(app)
+    initAntDesignVue(app)
+    app.use(dyForm)
+    app.use(dyTable)
+    const userStore = useUserStore();
+    try {
+        await userStore.setRouter()
+    } catch (err) {
+        console.log(err)
+    }
+    initVueRouter(app)
+
+    app.mount("#app");
+}
+
+init()

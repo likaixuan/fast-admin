@@ -7,62 +7,45 @@ export default class Module {
   static MODULE_TYPE_CATALOGUE = 1; // 目录
   static MODULE_TYPE_MODULE = 2; // 模块
 
-  // 查询表单
-  static queryFieldMap = {
-    module_name: {
+  static fields = [
+    {
       name: "module_name",
-      type: "input",
+      inputType: "input",
       label: "模块名",
+      useScene: "*",
+      inputOptions: {},
     },
-    p_module_id: {
+    {
       name: "p_module_id",
-      type: "cascader",
+      inputType: "cascader",
       label: "上级模块",
-      options: {
+      useScene:'query',
+      inputOptions: {
         list: [
           {
             module_name: "sb",
             module_id: "xxx",
           },
         ],
-        labelName: "module_name",
-        valueName: "module_id",
+        props:{
+          label: "module_name",
+          value: "module_id",
+        }
       },
     },
-  };
-
-  // 编辑或者新增
-  static updateFieldMap = {
-    module_name: {
-      name: "module_name",
-      type: "input",
-      label: "模块名",
-    },
-    module_url: {
+    {
       name: "module_url",
-      type: "input",
+      inputType: "input",
       label: "模块地址",
+      useScene: "*",
+      inputOptions: {},
     },
-    p_module_id: {
-      name: "p_module_id",
-      type: "cascader",
-      label: "上级模块",
-      options: {
-        list: [
-          {
-            module_name: "sb",
-            module_id: "xxx",
-          },
-        ],
-        labelName: "module_name",
-        valueName: "module_id",
-      },
-    },
-    module_type: {
+    {
       name: "module_type",
-      type: "select",
+      inputType: "select",
       label: "模块类型",
-      options: {
+      useScene:'query||update||create',
+      inputOptions: {
         list: [
           {
             label: "目录",
@@ -75,76 +58,23 @@ export default class Module {
         ],
       },
     },
-    create_time: {
+    {
       name: "create_time",
-      type: "input",
+      inputType: "input",
       label: "创建时间",
-      disabled: true,
-    },
-    update_time: {
-      name: "update_time",
-      type: "input",
-      label: "修改时间",
-      disabled: true,
-    },
-  };
-
-  // 表格字段
-  static listFieldMap = {
-    module_name: {
-      name: "module_name",
-      type: "input",
-      label: "模块名",
-    },
-    module_url: {
-      name: "module_url",
-      type: "input",
-      label: "模块地址",
-    },
-    module_type: {
-      name: "module_type",
-      type: "select",
-      label: "模块类型",
-      options: {
-        list: [
-          {
-            label: "目录",
-            value: 1,
-          },
-          {
-            label: "模块",
-            value: 2,
-          },
-        ],
+      useScene: "update||list",
+      inputOptions: {
+        disabled: true,
       },
     },
-    p_module_id: {
-      name: "p_module_id",
-      type: "cascader",
-      label: "上级模块",
-      options: {
-        list: [
-          {
-            module_name: "sb",
-            module_id: "xxx",
-          },
-        ],
-        labelName: "module_name",
-        valueName: "module_id",
+    {
+      name: "update_time",
+      inputType: "input",
+      label: "修改时间",
+      useScene: "update||list",
+      inputOptions: {
+        disabled: true,
       },
     },
-    create_time: {
-      name: "create_time",
-      type: "input",
-      label: "创建时间",
-      disabled: true,
-    },
-    update_time: {
-      name: "update_time",
-      type: "input",
-      label: "修改时间",
-      disabled: true,
-    },
-  };
-  
+  ];
 }
