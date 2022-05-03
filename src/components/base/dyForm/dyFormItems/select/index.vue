@@ -2,9 +2,9 @@
   <el-select v-model="itemValue" v-bind="inputOptions" @change="onValChange">
     <el-option
       v-for="item in inputOptions.list"
-      :key="item.value"
-      :label="item.label"
-      :value="item.value"
+      :key="item[inputOptions.valueName || 'value']"
+      :label="item[inputOptions.labelName || 'label']"
+      :value="item[inputOptions.valueName || 'value']"
     />
   </el-select>
 </template>
@@ -26,6 +26,8 @@ const inputOptions = computed(() => {
     ...props.info.inputOptions,
   };
 });
+
+
 // 事件相关
 const emit = defineEmits(["change", "update:modelValue"]);
 let itemValue = computed({
