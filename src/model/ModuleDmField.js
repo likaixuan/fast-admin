@@ -12,36 +12,41 @@ export default class ModuleDmField {
   //   return request.post("/admin/sys/dataModelField/remove", params);
   // };
 
-  static queryFieldMap = {
-    field_c_name: {
+  static fields = [
+    {
       name: "field_c_name",
-      type: "input",
+      inputType: "input",
       label: "列中文名",
-    }
-  };
-
-  static updateFieldMap = {
-    field_c_name: {
-      name: "field_c_name",
-      type: "input",
-      label: "列中文名",
+      useScene: "update||create||list",
+      inputOptions: {
+        placeholder: "请输入列中文名",
+      },
     },
-    field_name: {
+    {
       name: "field_name",
-      type: "input",
+      inputType: "input",
       label: "数据库列名",
+      useScene: "update||create||list",
+      inputOptions: {
+        placeholder: "请输入列中文名",
+      },
     },
-    input_type: {
+    {
       name: "input_type",
-      type: "input",
+      inputType: "input",
       label: "组件",
-      disabled: true,
+      useScene: "update||create||list",
+      inputOptions: {
+        placeholder: "请输入列中文名",
+        disabled: true,
+      },
     },
-    required: {
+    {
       name: "required",
-      type: "select",
+      inputType: "select",
       label: "必填",
-      options: {
+      useScene: "update||create||list",
+      inputOptions: {
         list: [
           {
             label: "否",
@@ -54,11 +59,12 @@ export default class ModuleDmField {
         ],
       },
     },
-    can_query: {
+    {
       name: "can_query",
-      type: "select",
+      inpitType: "select",
       label: "查询区",
-      options: {
+      useScene: "update||create||list",
+      inputOptions: {
         list: [
           {
             label: "否",
@@ -71,11 +77,12 @@ export default class ModuleDmField {
         ],
       },
     },
-    can_list: {
+    {
       name: "can_list",
-      type: "select",
+      inputType: "select",
       label: "列表区",
-      options: {
+      useScene: "update||create||list",
+      inputOptions: {
         list: [
           {
             label: "否",
@@ -88,11 +95,12 @@ export default class ModuleDmField {
         ],
       },
     },
-    can_update: {
+    {
       name: "can_update",
-      type: "select",
+      inputType: "select",
       label: "编辑区",
-      options: {
+      useScene: "update||create||list",
+      inputOptions: {
         list: [
           {
             label: "否",
@@ -105,116 +113,23 @@ export default class ModuleDmField {
         ],
       },
     },
-    field_type: {
+    {
       name: "field_type",
-      type: "input",
+      inputType: "input",
       label: "列类型",
-      disabled: true,
+      useScene: "update||create||list",
+      inputOptions: {
+        disabled: true,
+      },
     },
-    data_type: {
+    {
       name: "data_type",
-      type: "input",
+      inputType: "input",
       label: "前端数据类型",
-      disabled: true,
-    },
-  };
-
-  static listFieldMap = {
-    field_c_name: {
-      name: "field_c_name",
-      type: "input",
-      label: "列中文名",
-    },
-    field_name: {
-      name: "field_name",
-      type: "input",
-      label: "数据库列名",
-    },
-    input_type: {
-      name: "input_type",
-      type: "input",
-      label: "组件",
-      disabled: true,
-    },
-    required: {
-      name: "required",
-      type: "select",
-      label: "必填",
-      options: {
-        list: [
-          {
-            label: "否",
-            value: 0,
-          },
-          {
-            label: "是",
-            value: 1,
-          },
-        ],
+      useScene: "update||create||list",
+      inputOptions: {
+        disabled: true,
       },
     },
-    can_query: {
-      name: "can_query",
-      type: "select",
-      label: "查询显示",
-      options: {
-        list: [
-          {
-            label: "否",
-            value: 0,
-          },
-          {
-            label: "是",
-            value: 1,
-          },
-        ],
-      },
-    },
-    can_list: {
-      name: "can_list",
-      type: "select",
-      label: "列表显示",
-      options: {
-        list: [
-          {
-            label: "否",
-            value: 0,
-          },
-          {
-            label: "是",
-            value: 1,
-          },
-        ],
-      },
-    },
-    can_update: {
-      name: "can_update",
-      type: "select",
-      label: "编辑显示",
-      options: {
-        list: [
-          {
-            label: "否",
-            value: 0,
-          },
-          {
-            label: "是",
-            value: 1,
-          },
-        ],
-      },
-    },
-    field_type: {
-      name: "field_type",
-      type: "input",
-      label: "列类型",
-      disabled: true,
-    },
-    data_type: {
-      name: "data_type",
-      type: "input",
-      label: "前端数据类型",
-      disabled: true,
-    },
-  };
+  ];
 }

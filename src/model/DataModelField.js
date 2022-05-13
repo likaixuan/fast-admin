@@ -33,89 +33,60 @@ export default class DataModelField {
     },
   };
 
-  static queryFieldMap = {
-    field_c_name: {
+  static fields = [
+    {
       name: "field_c_name",
-      type: "input",
+      inputType: "input",
       label: "列中文名",
+      useScene: "query||list||update||create",
+      inputOptions: {
+        placeholder: "请输入列中文名",
+      },
     },
-    field_name: {
+    {
       name: "field_name",
-      type: "input",
-      label: "数据库列名",
+      inputType: "input",
+      label: "数据字段名",
+      useScene: "query||list||update||create",
+      inputOptions: {
+        placeholder: "请输入数据库字段名",
+      },
     },
-  };
-
-  static updateFieldMap = {
-    field_c_name: {
-      name: "field_c_name",
-      type: "input",
-      label: "列中文名",
-    },
-    field_name: {
-      name: "field_name",
-      type: "input",
-      label: "数据库列名",
-    },
-    len: {
+    {
       name: "len",
-      type: "input",
-      label: "列长"
+      inputType: "input",
+      label: "列长",
+      useScene: "query||list||update||create",
+      inputOptions: {
+        disabled: true
+      },
     },
-    field_type: {
+    {
       name: "field_type",
-      type: "input",
+      inputType: "input",
       label: "列类型",
-      disabled:true
+      useScene: "query||list||update||create",
+      inputOptions: {
+        disabled: true,
+      },
     },
-    input_type: {
+    {
       name: "input_type",
-      type: "input",
+      inputType: "input",
       label: "组件",
-      disabled:true
+      useScene: "query||list||update||create",
+      inputOptions: {
+        disabled: true,
+      },
     },
-    data_type: {
+    {
       name: "data_type",
-      type: "input",
+      inputType: "input",
       label: "前端数据类型",
-      disabled:true
+      useScene: "query||list||update||create",
+      inputOptions: {
+        disabled: true,
+      },
     },
-
-  };
-
-  static listFieldMap = {
-    field_c_name: {
-      name: "field_c_name",
-      type: "input",
-      label: "列中文名",
-    },
-    field_name: {
-      name: "field_name",
-      type: "input",
-      label: "数据库列名",
-    },
-    len: {
-      name: "len",
-      type: "input",
-      label: "列长"
-    },
-    field_type: {
-      name: "field_type",
-      type: "input",
-      label: "列类型",
-      disabled:true
-    },
-    input_type: {
-      name: "input_type",
-      type: "input",
-      label: "组件",
-      disabled:true
-    },
-    data_type: {
-      name: "data_type",
-      type: "input",
-      label: "数据类型",
-      disabled:true
-    },
-  };
+  ];
 }

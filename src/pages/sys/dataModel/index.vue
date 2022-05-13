@@ -58,6 +58,11 @@
     >
   </div>
 </template>
+<script>
+  export default {
+    name: 'dataModel',
+  }
+</script>
 <script setup>
 import { createVNode } from "vue";
 import useM from "@/hooks/useM.js";

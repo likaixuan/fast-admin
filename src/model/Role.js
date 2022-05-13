@@ -4,63 +4,45 @@ export default class Role {
   static primaryKey = "role_id";
   static modelCname = "角色管理";
 
-  // 查询表单
-  static queryFieldMap = {
-    role_name: {
+  static fields = [
+     {
       name: "role_name",
-      type: "input",
+      inputType: "input",
       label: "角色名称",
+      useScene:"query||list||update||create",
+      inputOptions:{
+        placeholder:'请输入角色名称'
+      }
     },
-  };
-
-  // 编辑或者新增
-  static updateFieldMap = {
-    role_name: {
-      name: "role_name",
-      type: "input",
-      label: "角色名称",
-    },
-    role_code: {
+   {
       name: "role_code",
-      type: "input",
+      inputType: "input",
       label: "角色编码",
+      useScene:"query||list||update||create",
+      inputOptions:{
+        placeholder:'请输入角色编码'
+      }
     },
-    create_time: {
-        name: "create_time",
-        type: "input",
-        label: "创建时间",
-        disabled:true
-      },
-      update_time: {
-        name: "update_time",
-        type: "input",
-        label: "修改时间",
-        disabled:true
-      },
-  };
-  // 表格字段
-  static listFieldMap = {
-    role_name: {
-      name: "role_name",
-      type: "input",
-      label: "角色名称",
-    },
-    role_code: {
-      name: "role_code",
-      type: "input",
-      label: "角色编码",
-    },
-    create_time: {
+    {
       name: "create_time",
-      type: "input",
+      inputType: "input",
       label: "创建时间",
-      disabled:true
+      useScene:"list||update",
+     
+      inputOptions:{
+        disabled: true,
+      }
     },
-    update_time: {
+     {
       name: "update_time",
-      type: "input",
+      inputType: "input",
       label: "修改时间",
-      disabled:true
+      useScene:"list||update",
+      disabled: true,
+      inputOptions:{
+        disabled: true,
+      }
     },
-  };
+  ]
+  
 }

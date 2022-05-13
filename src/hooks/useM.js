@@ -22,17 +22,22 @@ export default function (model, options = {}) {
     isShowQueryPanel: true,
     buttonSize: "default", // large | default | small
     primaryKey: model.primaryKey,
-    fields:model.fields || [],
+    fields: model.fields || [],
     selectedRowKeys: [],
     $parent: null,
+    inject:[],
     pParams: computed(() => {
       if (!m.$parent) {
         return {};
       }
       const $parent = m.$parent;
       if ($parent.isUpdate) {
+        let [key=$parent.primaryKey,valKey] = m.inject
+        if(!valKey) {
+          valKey = key
+        }
         return {
-          [$parent.primaryKey]: $parent.updateParams[$parent.primaryKey],
+          [key]: $parent.updateParams[valKey],
         };
       } else {
         return {};
@@ -91,22 +96,22 @@ export default function (model, options = {}) {
   };
 
   // 设置field Options
-  const setFieldOptions = (name,list) =>{
-    const index = m.fields.findIndex(item=>item.name===name)
-    if(index !==-1) {
-      m.fields[index].inputOptions.list = list
+  const setFieldOptions = (name, list) => {
+    const index = m.fields.findIndex((item) => item.name === name);
+    if (index !== -1) {
+      m.fields[index].inputOptions.list = list;
     }
-  }
+  };
 
   // 是否显示编辑区域
   const showEditPanel = async function (options = {}) {
-    if (hooks.beforeShowEditPanel) {
-      await hooks.beforeShowEditPanel(options);
-    }
     const { addParams = {} } = options;
     m.updateParams = {
       ...addParams,
     };
+    if (hooks.beforeShowEditPanel) {
+      await hooks.beforeShowEditPanel(options);
+    }
     m.isShowEditPanel = true;
     if (hooks.after) {
       await hooks.afterShowEditPanel(options);
@@ -242,20 +247,22 @@ export default function (model, options = {}) {
   const remove = async function (options = {}) {
     const { params, record } = options;
     let tip = "您确定要删除当前记录吗";
-    let ids =''
+    let ids = "";
     const selectedRowKeysLen = m.selectedRowKeys.length;
     if (selectedRowKeysLen === 0) {
       if (record) {
-        ids = record[m.primaryKey]
+        ids = record[m.primaryKey];
       } else {
         message.warning("请选中一条记录");
         return;
       }
     } else {
-      tip = `当前共选中了${selectedRowKeysLen}条记录，您确定要删除吗？`
-      ids =  m.selectedRowKeys.map((item)=>{
-        return item[m.primaryKey]
-      }).join(",")
+      tip = `当前共选中了${selectedRowKeysLen}条记录，您确定要删除吗？`;
+      ids = m.selectedRowKeys
+        .map((item) => {
+          return item[m.primaryKey];
+        })
+        .join(",");
     }
 
     Modal.confirm({
@@ -309,6 +316,6 @@ export default function (model, options = {}) {
     hideEditLoading,
     showEditPanel,
     hideEditPanel,
-    setFieldOptions
+    setFieldOptions,
   });
 }

@@ -41,12 +41,14 @@
         :fields="listFields"
       ></dyTable>
       <!-- 分页 -->
-      <el-pagination
-        :page-size="pagination.pageSize"
-        v-model:currentPage="pagination.current"
-        layout="prev, pager, next"
-        :total="pagination.total"
-      />
+      <div class="page-wrapper">
+        <el-pagination
+          :page-size="pagination.pageSize"
+          v-model:currentPage="pagination.current"
+          layout="prev, pager, next"
+          :total="pagination.total"
+        />
+      </div>
     </div>
 
     <!-- 编辑面板  -->
@@ -66,7 +68,10 @@
           :loading="dataModel.isShowEditLoading"
           :size="dataModel.buttonSize"
           >保存</el-button
-        ></a-space
+        >
+        <slot name="saveBtnAfter"> </slot>
+        
+        </a-space
       >
       <div class="edit-form-wrapper">
         <dyForm
@@ -118,7 +123,7 @@
 <script setup>
 import dyForm from "components/base/dyForm/index.vue";
 import dyTable from "components/base/dyTable/index.vue";
-import { defineProps, defineEmits,computed } from "vue";
+import { defineProps, defineEmits, computed } from "vue";
 import useFields from "@/hooks/useFields";
 const props = defineProps({
   dataModel: Object,
@@ -141,7 +146,6 @@ const { fields: listFields } = useFields({
   scene: "list",
 });
 
-
 // 处理选中
 const handleSelectionChange = function (selectedRowKeys) {
   console.log(selectedRowKeys, 453434);
@@ -162,7 +166,7 @@ const pagination = computed(() => {
     return {
       total: m.pageInfo.total,
       current: m.pageInfo.current,
-      "pageSize": m.pageInfo.pageSize,
+      pageSize: m.pageInfo.pageSize,
     };
   } else false;
 });
@@ -185,6 +189,7 @@ const onDyFormChange = (...args) => {
 </script>
 <style lang="less">
 .curd {
+  width:100%;
   // position: absolute;
   // top: 0px;
   // bottom: 0px;
@@ -241,5 +246,11 @@ const onDyFormChange = (...args) => {
   left: 0px;
   right: 0px;
   // background:red;
+}
+
+.page-wrapper {
+  margin-top:16px;
+  display:flex;
+  justify-content:center;
 }
 </style>

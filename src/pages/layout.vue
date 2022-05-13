@@ -70,7 +70,7 @@
 
     <el-container>
       <el-header class="flex justify-between items-center">
-        <div class="text-xl">兆峰开发平台</div>
+        <div class="text-xl">野狗低代码</div>
         <div class="toolbar">
           <el-dropdown>
             <el-image
@@ -95,96 +95,98 @@
         </div>
       </el-header>
 
-      <div style="overflow: hidden">
-        <el-header style="padding: 0px; height: auto">
-          <el-row :gutter="16">
-            <el-col :span="22">
-              <el-tabs
-                :model-value="$route.path"
-                type="card"
-                class="demo-tabs"
-                @tab-click="handleTabClick"
-                @tab-remove="handleTabClose"
-              >
-                <el-tab-pane
-                  v-for="page in commonStore.cachedPageMap"
-                  :key="page.name"
-                  :label="page.meta.moduleName"
-                  :name="page.path"
-                  :closable="page.path !== '/index'"
+      <el-main>
+        <el-container style="height: 100%;overflow: hidden;">
+          <el-header style="padding: 0px">
+            <el-row :gutter="16">
+              <el-col :span="22">
+                <el-tabs
+                  :model-value="$route.path"
+                  type="card"
+                  class="demo-tabs"
+                  @tab-click="handleTabClick"
+                  @tab-remove="handleTabClose"
                 >
-                </el-tab-pane>
-              </el-tabs>
-            </el-col>
-            <el-col :span="2" style="display: flex; align-items: center">
-              <el-button
-                :icon="Refresh"
-                circle
-                style="margin-right: 8px"
-                @click="commonStore.refreshPage"
-              />
-              <el-dropdown>
-                <el-button :icon="Setting" circle />
-                <template #dropdown>
-                  <el-dropdown-menu>
-                    <el-dropdown-item
-                      :icon="Refresh"
-                      @click="commonStore.refreshPage"
-                      >重新加载</el-dropdown-item
-                    >
-                    <el-dropdown-item
-                      :icon="Close"
-                      @click="commonStore.closeCurrentPage"
-                    >
-                      关闭当前标签页
-                    </el-dropdown-item>
+                  <el-tab-pane
+                    v-for="page in commonStore.cachedPageMap"
+                    :key="page.name"
+                    :label="page.meta.moduleName"
+                    :name="page.path"
+                    :closable="page.path !== '/index'"
+                  >
+                  </el-tab-pane>
+                </el-tabs>
+              </el-col>
+              <el-col :span="2" style="display: flex; align-items: center">
+                <el-button
+                  :icon="Refresh"
+                  circle
+                  style="margin-right: 8px"
+                  @click="commonStore.refreshPage"
+                />
+                <el-dropdown>
+                  <el-button :icon="Setting" circle />
+                  <template #dropdown>
+                    <el-dropdown-menu>
+                      <el-dropdown-item
+                        :icon="Refresh"
+                        @click="commonStore.refreshPage"
+                        >重新加载</el-dropdown-item
+                      >
+                      <el-dropdown-item
+                        :icon="Close"
+                        @click="commonStore.closeCurrentPage"
+                      >
+                        关闭当前标签页
+                      </el-dropdown-item>
 
-                    <el-dropdown-item
-                      divided
-                      :icon="ArrowLeft"
-                      @click="commonStore.closeToLeftPage"
-                      :disabled="commonStore.isLeftEnd"
-                    >
-                      关闭左侧</el-dropdown-item
-                    >
-                    <el-dropdown-item
-                      :icon="ArrowRight"
-                      @click="commonStore.closeToRightPage"
-                      :disabled="commonStore.isRightEnd"
-                    >
-                      关闭右侧</el-dropdown-item
-                    >
-                    <el-dropdown-item
-                      divided
-                      :icon="Switch"
-                      @click="commonStore.closeOtherPage"
-                    >
-                      关闭其它</el-dropdown-item
-                    >
-                    <el-dropdown-item
-                      :icon="SwitchButton"
-                      @click="commonStore.closeAllPage"
-                    >
-                      全部关闭
-                    </el-dropdown-item>
-                  </el-dropdown-menu>
-                </template>
-              </el-dropdown>
-            </el-col>
-          </el-row>
-        </el-header>
-        <div>
-          <el-scrollbar style="box-sizing: border-box">
+                      <el-dropdown-item
+                        divided
+                        :icon="ArrowLeft"
+                        @click="commonStore.closeToLeftPage"
+                        :disabled="commonStore.isLeftEnd"
+                      >
+                        关闭左侧</el-dropdown-item
+                      >
+                      <el-dropdown-item
+                        :icon="ArrowRight"
+                        @click="commonStore.closeToRightPage"
+                        :disabled="commonStore.isRightEnd"
+                      >
+                        关闭右侧</el-dropdown-item
+                      >
+                      <el-dropdown-item
+                        divided
+                        :icon="Switch"
+                        @click="commonStore.closeOtherPage"
+                      >
+                        关闭其它</el-dropdown-item
+                      >
+                      <el-dropdown-item
+                        :icon="SwitchButton"
+                        @click="commonStore.closeAllPage"
+                      >
+                        全部关闭
+                      </el-dropdown-item>
+                    </el-dropdown-menu>
+                  </template>
+                </el-dropdown>
+              </el-col>
+            </el-row>
+          </el-header>
+          <el-main style="position: relative;overflow: hidden;">
             <div class="page-container">
-              <router-view v-slot="{ Component }">
-                <keep-alive :include="commonStore.cachedPageNames">
-                  <component :is="Component"></component>
-                </keep-alive>
-              </router-view>
+              <el-scrollbar>
+                <router-view v-slot="{ Component }">
+                  <keep-alive :include="commonStore.cachedPageNames">
+                    <component :is="Component"></component>
+                  </keep-alive>
+                </router-view>
+              </el-scrollbar>
             </div>
-          </el-scrollbar>
-        </div>
-      </div>
+          </el-main>
+        </el-container>
+      </el-main>
     </el-container>
   </el-container>
 </template>
@@ -235,11 +237,19 @@ const handleTabClose = (name) => {
   bottom: 0px;
   left: 0px;
   right: 0px;
+  min-width:1400px;
 }
 
 .page-container {
-  /* background: red; */
-  padding: 8px 24px;
+  position:absolute;
+  top:0px;
+  left:0px;
+  right:0px;
+  bottom:0px;
+  background: red;
+  box-sizing:border-box;
+  /* padding: 8px 24px; */
+  overflow: hidden;
 }
 .layout-container .el-header {
   position: relative;
