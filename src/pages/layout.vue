@@ -246,7 +246,6 @@ const handleTabClose = (name) => {
   left:0px;
   right:0px;
   bottom:0px;
-  background: red;
   box-sizing:border-box;
   /* padding: 8px 24px; */
   overflow: hidden;

@@ -41,7 +41,7 @@
         :fields="listFields"
       ></dyTable>
       <!-- 分页 -->
-      <div class="page-wrapper">
+      <div class="page-wrapper" v-if="dataModel.isPage"> 
         <el-pagination
           :page-size="pagination.pageSize"
           v-model:currentPage="pagination.current"
@@ -89,7 +89,7 @@
           v-else
         ></dyForm>
       </div>
-      <div style="margin-top: 24px">
+      <div style="margin-top: 8px">
         <slot name="updateFormAfter"> </slot>
       </div>
     </div>
@@ -175,6 +175,7 @@ const findOrFindAll = () => {
     if (props.dataModel.isPage) {
       props.dataModel.find();
     } else {
+      props.dataModel.findAll()
     }
   } else {
     // props.dataModel.findTree();

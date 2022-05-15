@@ -46,6 +46,8 @@
                       @click="createModuleDmFields"
                       >创建字段</el-button
                     >
+                    <el-button @click="genCode">生成代码</el-button>
+                    <div id="view"></div>
                   </template>
                   <template v-slot:updateFormAfter v-if="ModuleDmM.isUpdate">
                     <Crud :dataModel="ModuleDmFieldM"></Crud>
@@ -73,13 +75,23 @@ import ModuleDm from "@/model/ModuleDm";
 import ModuleDmField from "@/model/ModuleDmField";
 import DataModel from "@/model/DataModel";
 import DataModelField from "@/model/DataModelField";
+import { ElNotification } from "element-plus";
+import { initElementPlus } from "@/plugins/elementPlus";
+import { initAntDesignVue } from "@/plugins/antDesignVue";
+import dyForm from "@/components/base/dyForm";
+import dyTable from "@/components/base/dyTable";
+import Crud from "@/components/bus/crud/index.vue"
 
-import Crud from "components/bus/crud/index.vue";
+import Code from "./code.js";
+// import Vue from "Vue";
+import {  createApp } from "vue";
+import { firstToUpperCase, underlineToHump } from "@/utils/util.js";
 import {
   DownOutlined,
   UnorderedListOutlined,
   SmileOutlined,
 } from "@ant-design/icons-vue";
+console.log(Code.genModelClassCode, 1232323);
 
 // 初始化
 const DataModelM = useM(DataModel);
@@ -93,8 +105,9 @@ const ModuleM = useM(Module, {
       back: false,
     },
     ModuleDmFieldM: useM(ModuleDmField, {
-      buttonSize:'small',
+      buttonSize: "small",
       inject: ["module_dm_id"],
+      isPage: false,
     }),
     DataModelFieldM: useM(DataModelField, {
       inject: ["data_model_id"],
@@ -167,6 +180,7 @@ const onSelectTreeNode = (...args) => {
   const { node } = args[1];
   if (node.isRoot) {
     ModuleDmM.updateParams = {};
+    ModuleDmFieldM.tableData = [];
   } else {
     ModuleDmM.updateParams = {
       module_dm_name: node.module_dm_name,
@@ -178,6 +192,7 @@ const onSelectTreeNode = (...args) => {
       create_time: node.create_time,
       update_time: node.update_time,
     };
+    ModuleDmFieldM.findAll();
   }
   console.log(args, 44444);
 };
@@ -219,19 +234,122 @@ const createModuleDmFields = async () => {
     .map((item) => {
       return {
         data_model_field_id: item.data_model_field_id,
-        module_dm_id:ModuleDmM.updateParams.module_dm_id , // 模块数据模型id 代表该字段主表
+        module_dm_id: ModuleDmM.updateParams.module_dm_id, // 模块数据模型id 代表该字段主表
         data_model_field_id: item.data_model_field_id, // 引用的数据字段
-        field_name:item.field_name,
-        field_c_name:item.field_c_name,
-        field_type:item.field_type,
-        data_type:item.data_type,
-        // can_create:0,
-        // can_update:0,
-        // can_query:0,
-        // can_list:0,
+        field_name: item.field_name,
+        field_c_name: item.field_c_name,
+        field_type: item.field_type,
+        input_type: item.input_type,
+        data_type: item.data_type,
       };
     });
+  await Promise.all([
+    canAddFields.map((params) => {
+      return ModuleDmField.create(params)
+        .then((res) => {
+          ElNotification({
+            title: "操作成功",
+            message: `${params.field_c_name}字段创建成功`,
+            type: "success",
+          });
+          console.log(res, "成功");
+        })
+        .catch((err) => {
+          ElNotification({
+            title: "操作失败",
+            message: `${params.field_c_name}字段创建失败`,
+            type: "Error",
+          });
+          console.log(err, "失败");
+        });
+    }),
+  ]);
+  await ModuleDmFieldM.findAll();
   console.log(canAddFields, 667788);
+};
+
+// const toCode() {
+
+// }
+const _loadTree = async (treeData) => {
+  let modelName = "";
+  let tableName = "";
+  let modelCname = treeData.module_dm_name;
+  let primaryKey = "_id";
+  const dataModelData = await DataModel.findAll({
+    data_model_id: treeData.data_model_id,
+  });
+  tableName = dataModelData.data[0].table_name;
+  modelName = firstToUpperCase(underlineToHump(tableName));
+  const dataModelFieldData = await ModuleDmField.findAll({
+    module_dm_id: treeData.module_dm_id,
+  });
+  const arr = [];
+  if (treeData.children.length > 0) {
+    for (let data of treeData.children) {
+      let t = await _loadTree(data);
+      arr.push(t);
+    }
+  }
+  return {
+    modelName,
+    tableName,
+    modelCname,
+    primaryKey,
+    fields: dataModelFieldData.data,
+    children: arr,
+  };
+};
+// 生成代码
+const genCode = async () => {
+  const res = await _loadTree(ModuleDmM.treeData[0]);
+  console.log(res, 51111);
+
+  // console.log(Code.genModelClassCode(res),1111)
+  // console.log(Code.genJsCode(res),222)
+  // console.log(Code.genTemplateCode(res),333)
+
+  // console.log(Code.genExportRefCode(res), 8999);
+
+  // Vue.createApp(eval(
+  //   `{
+  //      template:${Code.genTemplateCode(res)}
+  //     setup() {
+  //       // 模型代码
+  //       ${Code.genModelClassCode(res)}
+  //       // JS 循环引用代码
+  //       ${Code.genJsCode(res)}
+  //       return ${Code.genExportRefCode(ref)}
+  //     }
+  //   }
+  //   `
+  // ))
+  // ${Code.genTemplateCode(res)}
+  const code = `{
+       template:\`${Code.genTemplateCode(res)}\`,
+      setup() {
+        // 模型代码
+        ${Code.genModelClassCode(res)}
+        // JS 循环引用代码
+        ${Code.genJsCode(res)}
+        console.log(ArticleM,99911232323)
+        return ${Code.genExportRefCode(res)}
+      }
+    }
+    `;
+
+  console.log(code, 43434);
+
+  let options = {};
+  eval(`options = ${code}`);
+  const app = createApp(options)
+  initElementPlus(app);
+  initAntDesignVue(app)
+  app.use(dyForm);
+  app.use(dyTable);
+  app.component('Crud',Crud)
+  app.mount("#view")
+ 
 };
 </script>
 <style lang="less" scoped>

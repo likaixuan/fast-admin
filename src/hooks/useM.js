@@ -69,7 +69,9 @@ export default function (model, options = {}) {
 
   for (let key in options) {
     if (key.slice(-1) === "M") {
-      m[key].$parent = m;
+      // 防止循环引用
+      const t = JSON.parse(JSON.stringify(m))
+      m[key].$parent = t;
     }
   }
 
@@ -203,10 +205,10 @@ export default function (model, options = {}) {
 
   const save = async function (options = {}) {
     const { params } = options;
-    if (m.isShowEditLoading) {
-      message.error("不可重复点击！");
-      return;
-    }
+    // if (m.isShowEditLoading) {
+    //   message.error("不可重复点击！");
+    //   return;
+    // }
     showTableLoading();
     showEditLoading();
     try {

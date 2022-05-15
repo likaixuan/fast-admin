@@ -31,7 +31,11 @@
                     <el-button size="default">多图</el-button>
                     <el-button size="default">单文件</el-button>
                     <el-button size="default">多文件</el-button>
-                    <el-button size="default">关联</el-button>
+                    <el-button
+                      size="default"
+                      @click="showCreateFieldPanel('join')"
+                      >关联</el-button
+                    >
                   </a-space>
                 </el-card>
               </template>
@@ -47,21 +51,23 @@
               >
                 <el-tabs type="card">
                   <el-tab-pane label="状态管理">
-                       <Crud :dataModel="DataModelM.DataModelFieldM.DataModelFieldStateM" />
-                  </el-tab-pane></el-tabs
-                >
+                    <Crud
+                      :dataModel="
+                        DataModelM.DataModelFieldM.DataModelFieldStateM
+                      "
+                    /> </el-tab-pane
+                ></el-tabs>
               </template>
             </Crud>
           </el-tab-pane>
-        </el-tabs>
-      </template></Crud
-    >
+        </el-tabs> </template
+    ></Crud>
   </div>
 </template>
 <script>
-  export default {
-    name: 'dataModel',
-  }
+export default {
+  name: "dataModel",
+};
 </script>
 <script setup>
 import { createVNode } from "vue";
@@ -71,7 +77,7 @@ import DataModelField from "@/model/DataModelField";
 import DataModelFieldState from "@/model/DataModelFieldState";
 
 import Module from "@/model/Module";
-import Crud from "components/bus/crud/index.vue";
+// import Crud from "components/bus/crud/index.vue";
 import { message } from "ant-design-vue";
 import { Modal } from "ant-design-vue";
 import { ExclamationCircleOutlined } from "@ant-design/icons-vue";
@@ -81,10 +87,10 @@ let DataModelM = useM(DataModel, {
     canActions: {
       add: false,
     },
-    DataModelFieldStateM:useM(DataModelFieldState,{
-      buttonSize:'small',
-      isShowQueryPanel: false
-    })
+    DataModelFieldStateM: useM(DataModelFieldState, {
+      buttonSize: "small",
+      isShowQueryPanel: false,
+    }),
   }),
 });
 
@@ -159,8 +165,13 @@ DataModelM.DataModelFieldM.remove = async () => {
     async onOk() {
       m.showTableLoading();
       try {
+        console.log(m.selectedRowKeys, 444444);
         const res = await DataModelField.remove({
-          ids: m.selectedRowKeys.join(","),
+          ids: m.selectedRowKeys
+            .map((item) => {
+              return item.data_model_field_id;
+            })
+            .join(","),
         });
         message.success("删除成功");
         m.hideTableLoading();

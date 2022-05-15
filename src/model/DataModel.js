@@ -8,6 +8,9 @@ export default class DataModel {
     return request.post("/admin/sys/dataModel/update", params);
   };
 
+  static findAll = (params) => {
+    return request.post(`/common/base/findAll?tableName=${this.tableName}&primaryKey=${this.primaryKey}`, params);
+  };
   static fields = [
     {
       name: "data_model_name",

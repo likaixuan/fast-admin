@@ -14,7 +14,7 @@ export default class DataModelField {
 
   static inputMap = {
     text: {
-      input_type: "text",
+      input_type: "input",
       field_type: "varchar",
       data_type: "String",
       len: 255,
@@ -30,6 +30,12 @@ export default class DataModelField {
       field_type: "varchar",
       data_type: "Number",
       len: 1024,
+    },
+    join: {
+      input_type: "join",
+      field_type: "bigint",
+      data_type: "String",
+      len: 20,
     },
   };
 
@@ -58,7 +64,7 @@ export default class DataModelField {
       label: "列长",
       useScene: "query||list||update||create",
       inputOptions: {
-        disabled: true
+        disabled: true,
       },
     },
     {
