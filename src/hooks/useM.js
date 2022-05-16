@@ -70,8 +70,8 @@ export default function (model, options = {}) {
   for (let key in options) {
     if (key.slice(-1) === "M") {
       // 防止循环引用
-      const t = JSON.parse(JSON.stringify(m))
-      m[key].$parent = t;
+      // const t = JSON.parse(JSON.stringify(m))
+      m[key].$parent = m;
     }
   }
 

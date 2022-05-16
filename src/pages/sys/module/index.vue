@@ -47,7 +47,6 @@
                       >创建字段</el-button
                     >
                     <el-button @click="genCode">生成代码</el-button>
-                    <div id="view"></div>
                   </template>
                   <template v-slot:updateFormAfter v-if="ModuleDmM.isUpdate">
                     <Crud :dataModel="ModuleDmFieldM"></Crud>
@@ -61,6 +60,21 @@
       </template>
     </Crud>
   </div>
+  <el-dialog
+    title="代码生成"
+    append-to-body
+    v-model="ModuleDmM.showCodePanel"
+    fullscreen
+  >
+    <el-row :getter="20">
+      <el-col :span="8">
+        <textarea v-model="ModuleDmM.code"></textarea>
+      </el-col>
+      <el-col :span="16">
+        <component :is="previewComponent"></component>
+      </el-col>
+    </el-row>
+  </el-dialog>
 </template>
 <script>
 export default {
@@ -68,7 +82,7 @@ export default {
 };
 </script>
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, reactive } from "vue";
 import useM from "@/hooks/useM.js";
 import Module from "@/model/Module";
 import ModuleDm from "@/model/ModuleDm";
@@ -76,15 +90,11 @@ import ModuleDmField from "@/model/ModuleDmField";
 import DataModel from "@/model/DataModel";
 import DataModelField from "@/model/DataModelField";
 import { ElNotification } from "element-plus";
-import { initElementPlus } from "@/plugins/elementPlus";
-import { initAntDesignVue } from "@/plugins/antDesignVue";
-import dyForm from "@/components/base/dyForm";
-import dyTable from "@/components/base/dyTable";
-import Crud from "@/components/bus/crud/index.vue"
+import Crud from "@/components/bus/crud/index.vue";
 
 import Code from "./code.js";
 // import Vue from "Vue";
-import {  createApp } from "vue";
+import { defineComponent } from "vue";
 import { firstToUpperCase, underlineToHump } from "@/utils/util.js";
 import {
   DownOutlined,
@@ -101,6 +111,8 @@ const ModuleM = useM(Module, {
   ModuleDmM: useM(ModuleDm, {
     isTree: true,
     isShowEditPanel: true,
+    showCodePanel: false,
+    code: "",
     canActions: {
       back: false,
     },
@@ -300,31 +312,11 @@ const _loadTree = async (treeData) => {
     children: arr,
   };
 };
+let previewComponent = ref({});
+
 // 生成代码
 const genCode = async () => {
   const res = await _loadTree(ModuleDmM.treeData[0]);
-  console.log(res, 51111);
-
-  // console.log(Code.genModelClassCode(res),1111)
-  // console.log(Code.genJsCode(res),222)
-  // console.log(Code.genTemplateCode(res),333)
-
-  // console.log(Code.genExportRefCode(res), 8999);
-
-  // Vue.createApp(eval(
-  //   `{
-  //      template:${Code.genTemplateCode(res)}
-  //     setup() {
-  //       // 模型代码
-  //       ${Code.genModelClassCode(res)}
-  //       // JS 循环引用代码
-  //       ${Code.genJsCode(res)}
-  //       return ${Code.genExportRefCode(ref)}
-  //     }
-  //   }
-  //   `
-  // ))
-  // ${Code.genTemplateCode(res)}
   const code = `{
        template:\`${Code.genTemplateCode(res)}\`,
       setup() {
@@ -337,19 +329,11 @@ const genCode = async () => {
       }
     }
     `;
-
-  console.log(code, 43434);
-
+  ModuleDmM.code = code;
   let options = {};
   eval(`options = ${code}`);
-  const app = createApp(options)
-  initElementPlus(app);
-  initAntDesignVue(app)
-  app.use(dyForm);
-  app.use(dyTable);
-  app.component('Crud',Crud)
-  app.mount("#view")
- 
+  previewComponent.value = defineComponent(options);
+  ModuleDmM.showCodePanel = true;
 };
 </script>
 <style lang="less" scoped>

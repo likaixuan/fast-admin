@@ -127,9 +127,17 @@ export default {
     let str = ``;
     subs &&
       subs.forEach((item) => {
+        let injectStr = ''
+        const field = item.fields.find((field)=>{
+          return field.inject_key
+        })
+        if(field) {
+          injectStr = `inject:['${field.field_name}','${field.inject_key}'],`
+        }
+        console.log(injectStr,2233445)
         str += `${item.modelName}M:useM(${item.modelName}${this.genSubJsCode(
           item.children
-        )}),`;
+        )},{${injectStr}}),`;
       });
     return str;
   },
