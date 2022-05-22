@@ -1,7 +1,7 @@
 <template>
   <el-table :data="tableData" @selection-change="handleSelectionChange">
     <el-table-column type="selection" width="55" />
-    <el-table-column label="操作">
+    <el-table-column label="操作" v-if="showAction">
       <template #default="scope">
         <el-button size="small" @click="onUpdateBtnClick(scope.row)">编辑</el-button>
       </template>
@@ -15,7 +15,7 @@
       <template #default="scope">
         <slot :name="item.name" :rowData="scope.row">
           <template v-if="!item.listOptions || !item.listOptions.tagType">
-            {{ contentFilter(false, scope.row, item.name) }}
+            {{ contentFilter(item.listOptions && item.listOptions.contentFilter, scope.row, item.name) }}
           </template>
           <template v-else>
             <el-tag :type="item.listOptions.tagType" disable-transitions>{{
@@ -43,6 +43,10 @@ const props = defineProps({
       return [];
     },
   },
+  showAction:{
+    type:Boolean,
+    default:true
+  }
 });
 
 const contentFilter = function (fn, rowData, name) {

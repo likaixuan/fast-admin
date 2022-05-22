@@ -4,6 +4,7 @@ import { useCommonStore } from "@/store/modules/common";
 const login = () => import("@/pages/login.vue");
 const index = () => import("@/pages/index.vue");
 const test = () => import("@/pages/sys/test/index.vue");
+const coreComponentTest = () => import("@/pages/sys/coreComponentTest/index.vue");
 
 const layout = () => import("@/pages/layout.vue");
 const NotFound = () => import("@/pages/404.vue");
@@ -13,6 +14,7 @@ const module = () => import("@/pages/sys/module/index.vue");
 const role = () => import("@/pages/sys/role/index.vue");
 const dataModel = () => import("@/pages/sys/dataModel/index.vue");
 const user = () => import("@/pages/sys/user/index.vue");
+
 export const routes = [
   {
     path: "/",
@@ -63,7 +65,15 @@ export const dyModuleMap = [
   {
     path:"/user",
     component: user,
-
+  },
+  {
+    path:"/test",
+    component: test,
+  }
+  ,
+  {
+    path:"/coreComponentTest",
+    component: coreComponentTest,
   }
 ].reduce((map, item) => {
   // 添加默认的name项 用于keep-alive include缓存所用

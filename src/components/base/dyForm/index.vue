@@ -1,5 +1,10 @@
 <template>
-  <el-form :model="formData">
+  <el-form
+    :model="formData"
+    :disabled="disabled"
+    :inline="false"
+    :label-position="labelPosition"
+  >
     <el-row :gutter="gutter" :justify="justify" :align="align" style="overflow">
       <template v-for="item in fields" :key="item.name">
         <el-col v-if="!!item.inputOptions" :span="item.span || 6">
@@ -49,6 +54,18 @@ const props = defineProps({
   align: {
     type: String,
     default: "top",
+  },
+  disabled: {
+    type: Boolean,
+    default: false,
+  },
+  labelPosition: {
+    type: String,
+    default: "right",
+  },
+  inline: {
+    type: Boolean,
+    default: false,
   },
 });
 
@@ -111,16 +128,5 @@ const calcUseScene = (field, scene, customSceneMap, sceneParser) => {
 </script>
 <style lang="less" scoped></style>
 
-
-
-let objectArray = []
-
-let arr = objectArray.filter((item)=>{
-  return item.id !==0
-})
-
-this.setData({
-  array:objectArray.filter((item)=>{
-  return item.id !==0
-})
-})
+let objectArray = [] let arr = objectArray.filter((item)=>{ return item.id !==0
+}) this.setData({ array:objectArray.filter((item)=>{ return item.id !==0 }) })

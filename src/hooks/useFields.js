@@ -41,7 +41,16 @@ const calcUseScene = (field, sceneMap) => {
   }
 };
 
-export default function ({fields, scene}) {
+const calcDisableScene = (field, sceneMap) => {
+  sceneMap = sceneMap || {};
+  if (field.disableScene) {
+    return sceneParser(field.disableScene, sceneMap);
+  } else {
+    return !!field.inputOptions.disabled;
+  }
+};
+
+export default function ({ fields, scene }) {
   let defaultSceneMap = {};
   if (scene) {
     defaultSceneMap = scene.split(",").reduce((map, item) => {
@@ -63,10 +72,17 @@ export default function ({fields, scene}) {
   };
 
   return {
-    fields: computed(()=>{
-      return fields.filter((item) => {
-        return calcUseScene(item, sceneMap.value);
-      });
+    fields: computed(() => {
+      return fields
+        .filter((item) => {
+          return calcUseScene(item, sceneMap.value);
+        })
+        .map((item) => {
+          if (item.inputOptions) {
+            item.inputOptions.disabled = calcDisableScene(item, sceneMap.value);
+          }
+          return item;
+        });
     }),
     setScene,
     resetScene,

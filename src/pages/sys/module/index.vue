@@ -2,13 +2,13 @@
   <div>
     <Crud :dataModel="ModuleM">
       <template v-slot:updateFormAfter v-if="ModuleM.isUpdate">
-        <el-tabs type="border-card">
-          <el-tab-pane
-            label="模块数据模型"
-            v-if="
+        <el-tabs type="border-card"  v-if="
               ModuleM.updateParams.module_type ===
               Module.MODULE_TYPE_NOCODE_MODULE
-            "
+            ">
+          <el-tab-pane
+            label="模块数据模型"
+           
           >
             <div class="module-dm-wrapper">
               <a-tree
@@ -55,7 +55,7 @@
               </div>
             </div>
           </el-tab-pane>
-          <el-tab-pane label="模块访问授权"> </el-tab-pane>
+          <!-- <el-tab-pane label="模块访问授权"> </el-tab-pane> -->
         </el-tabs>
       </template>
     </Crud>
