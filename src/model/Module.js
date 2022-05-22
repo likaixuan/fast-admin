@@ -5,7 +5,8 @@ export default class Module {
   static modelCname = "模块管理";
 
   static MODULE_TYPE_CATALOGUE = 1; // 目录
-  static MODULE_TYPE_MODULE = 2; // 模块
+  static MODULE_TYPE_MODULE = 2; // 纯代码模块
+  static MODULE_TYPE_NOCODE_MODULE = 3 // 无代码模块
 
   static fields = [
     {
@@ -19,13 +20,11 @@ export default class Module {
       name: "p_module_id",
       inputType: "cascader",
       label: "上级模块",
-      useScene:'query',
+      useScene:'query||update||create',
       inputOptions: {
+        placeholder: "请选择上级模块",
         list: [
-          {
-            module_name: "sb",
-            module_id: "xxx",
-          },
+         
         ],
         props:{
           label: "module_name",
@@ -38,7 +37,9 @@ export default class Module {
       inputType: "input",
       label: "模块地址",
       useScene: "*",
-      inputOptions: {},
+      inputOptions: {
+        placeholder: "请输入模块地址",
+      },
     },
     {
       name: "module_type",
@@ -46,14 +47,19 @@ export default class Module {
       label: "模块类型",
       useScene:'query||update||create',
       inputOptions: {
+        placeholder: "请选择模块类型",
         list: [
           {
             label: "目录",
-            value: 1,
+            value: this.MODULE_TYPE_CATALOGUE,
           },
           {
-            label: "模块",
-            value: 2,
+            label: "纯代码模块",
+            value: this.MODULE_TYPE_MODULE,
+          },
+          {
+            label: "无代码模块",
+            value: this.MODULE_TYPE_NOCODE_MODULE,
           },
         ],
       },

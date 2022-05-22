@@ -4,6 +4,7 @@ import { check, arrToTree, deepCopy, getIds, objToUrl } from "@/utils/util.js";
 import { message } from "ant-design-vue";
 import { Modal } from "ant-design-vue";
 import { ExclamationCircleOutlined } from "@ant-design/icons-vue";
+import { ElMessageBox,ElMessage } from "element-plus";
 export default function (model, options = {}) {
   let url = model.url || "/common/base";
   let urlSuffix =
@@ -163,12 +164,10 @@ export default function (model, options = {}) {
         key: model.primaryKey,
         pIdName: model.parentIdName,
       });
-      console.log(m.treeData, 5555);
       // hideTableLoading();
       return res;
     } catch (err) {
       // hideTableLoading();
-      console.log(err, 34343);
       return err;
     }
   }.bind(m);
@@ -197,7 +196,6 @@ export default function (model, options = {}) {
       hideTableLoading();
       return res;
     } catch (err) {
-      console.log(err, 343434);
       hideTableLoading();
       return err;
     }
@@ -219,13 +217,18 @@ export default function (model, options = {}) {
         ...m.pParams,
       });
       if (m.isUpdate) {
-        message.success("保存成功");
+        ElMessage({
+          type: 'success',
+          message: '保存成功',
+        })
       } else {
-        message.success("创建成功");
+        ElMessage({
+          type: 'success',
+          message: '创建成功',
+        })
       }
 
       m.updateParams = res.data;
-      console.log(m.updateParams, 5453553);
       hideEditLoading();
       if (!m.isTree) {
         if (m.isPage) {
@@ -238,7 +241,6 @@ export default function (model, options = {}) {
       }
       return res;
     } catch (err) {
-      console.log(err, 4354545);
       hideEditLoading();
       hideTableLoading();
       return err;
@@ -255,7 +257,10 @@ export default function (model, options = {}) {
       if (record) {
         ids = record[m.primaryKey];
       } else {
-        message.warning("请选中一条记录");
+        ElMessage({
+          type: 'warning',
+          message: '请选中一条记录',
+        })
         return;
       }
     } else {
@@ -267,20 +272,62 @@ export default function (model, options = {}) {
         .join(",");
     }
 
-    Modal.confirm({
-      title: `提示`,
-      icon: createVNode(ExclamationCircleOutlined),
-      content: tip,
-      okText: "确定",
-      okType: "danger",
-      cancelText: "取消",
-      async onOk() {
-        showTableLoading();
+    // Modal.confirm({
+    //   title: `提示`,
+    //   icon: createVNode(ExclamationCircleOutlined),
+    //   content: tip,
+    //   okText: "确定",
+    //   okType: "danger",
+    //   cancelText: "取消",
+    //   async onOk() {
+    //     showTableLoading();
+    //     try {
+    //       const res = await request.post(`${url}/remove${urlSuffix}`, {
+    //         ids,
+    //       });
+    //       message.success("删除成功");
+    //       hideTableLoading();
+    //       if (!m.isTree) {
+    //         if (m.isPage) {
+    //           await find();
+    //         } else {
+    //           await findAll();
+    //         }
+    //       } else {
+    //         await findTree();
+    //       }
+
+    //       return res;
+    //     } catch (err) {
+    //       hideTableLoading();
+    //       return err;
+    //     }
+    //   },
+    //   onCancel() {
+    //     message.info("已取消删除");
+    //   },
+    // });
+
+    ElMessageBox.confirm(
+      tip,
+      '提示',
+      {
+        confirmButtonText: '确认',
+        cancelButtonText: '取消',
+        type: 'warning',
+      }
+    )
+      .then( async() => {
+      
+             showTableLoading();
         try {
           const res = await request.post(`${url}/remove${urlSuffix}`, {
             ids,
           });
-          message.success("删除成功");
+          ElMessage({
+            type: 'success',
+            message: '删除成功',
+          })
           hideTableLoading();
           if (!m.isTree) {
             if (m.isPage) {
@@ -297,11 +344,14 @@ export default function (model, options = {}) {
           hideTableLoading();
           return err;
         }
-      },
-      onCancel() {
-        message.info("已取消删除");
-      },
-    });
+      })
+      .catch(() => {
+        ElMessage({
+          type: 'info',
+          message: '已取消删除',
+        })
+      })
+  
   };
 
   return reactive({

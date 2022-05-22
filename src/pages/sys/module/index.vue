@@ -1,15 +1,15 @@
 <template>
   <div>
     <Crud :dataModel="ModuleM">
-      <template
-        v-slot:updateFormAfter
-        v-if="
-          ModuleM.isUpdate &&
-          ModuleM.updateParams.module_type === Module.MODULE_TYPE_MODULE
-        "
-      >
+      <template v-slot:updateFormAfter v-if="ModuleM.isUpdate">
         <el-tabs type="border-card">
-          <el-tab-pane label="模块数据模型">
+          <el-tab-pane
+            label="模块数据模型"
+            v-if="
+              ModuleM.updateParams.module_type ===
+              Module.MODULE_TYPE_NOCODE_MODULE
+            "
+          >
             <div class="module-dm-wrapper">
               <a-tree
                 defaultExpandAll
@@ -66,9 +66,16 @@
     v-model="ModuleDmM.showCodePanel"
     fullscreen
   >
-    <el-row :getter="20">
+    <el-row :gutter="32">
       <el-col :span="8">
-        <textarea v-model="ModuleDmM.code"></textarea>
+        <div style="display: flex; justify-content: flex-end">
+          <!-- <el-button type="warning" @click="publish">代码发布</el-button> -->
+          <el-button @click="run">运行</el-button>
+        </div>
+        <textarea
+          v-model="ModuleDmM.code"
+          style="margin-top: 16px; width: 100%; min-height: 800px"
+        ></textarea>
       </el-col>
       <el-col :span="16">
         <component :is="previewComponent"></component>
@@ -92,7 +99,7 @@ import DataModelField from "@/model/DataModelField";
 import { ElNotification } from "element-plus";
 import Crud from "@/components/bus/crud/index.vue";
 
-import Code from "./code.js";
+import Code from "@/utils/code.js";
 // import Vue from "Vue";
 import { defineComponent } from "vue";
 import { firstToUpperCase, underlineToHump } from "@/utils/util.js";
@@ -101,7 +108,6 @@ import {
   UnorderedListOutlined,
   SmileOutlined,
 } from "@ant-design/icons-vue";
-console.log(Code.genModelClassCode, 1232323);
 
 // 初始化
 const DataModelM = useM(DataModel);
@@ -134,8 +140,9 @@ const DataModelFieldM = ModuleDmM.DataModelFieldM;
 
 // 挂载钩子
 ModuleM.mountHook("beforeShowEditPanel", async function (options) {
-  console.log(ModuleDmM.findTree, 123456);
   ModuleDmM.treeData = [];
+  ModuleDmM.updateParams = {};
+  ModuleDmFieldM.tableData = [];
   ModuleM.showTableLoading();
   try {
     if (options.addParams) {
@@ -163,7 +170,6 @@ const onModuleDmChange = (...args) => {
     const currentModel = DataModelM.tableData.find((item) => {
       return item.data_model_id === value;
     });
-    console.log(currentModel, 5555);
     if (currentModel) {
       ModuleDmM.updateParams.module_dm_name = currentModel.data_model_name;
     }
@@ -206,7 +212,6 @@ const onSelectTreeNode = (...args) => {
     };
     ModuleDmFieldM.findAll();
   }
-  console.log(args, 44444);
 };
 // 选择右键菜单
 const onClickTreeNodeRightMenu = (...args) => {
@@ -233,7 +238,6 @@ const onClickTreeNodeRightMenu = (...args) => {
 };
 // 创建模块数据模型字段
 const createModuleDmFields = async () => {
-  console.log(ModuleDmM.updateParams, 44444);
   await DataModelFieldM.findAll();
   await ModuleDmFieldM.findAll();
 
@@ -264,7 +268,6 @@ const createModuleDmFields = async () => {
             message: `${params.field_c_name}字段创建成功`,
             type: "success",
           });
-          console.log(res, "成功");
         })
         .catch((err) => {
           ElNotification({
@@ -272,12 +275,10 @@ const createModuleDmFields = async () => {
             message: `${params.field_c_name}字段创建失败`,
             type: "Error",
           });
-          console.log(err, "失败");
         });
     }),
   ]);
   await ModuleDmFieldM.findAll();
-  console.log(canAddFields, 667788);
 };
 
 // const toCode() {
@@ -324,7 +325,6 @@ const genCode = async () => {
         ${Code.genModelClassCode(res)}
         // JS 循环引用代码
         ${Code.genJsCode(res)}
-        console.log(ArticleM,99911232323)
         return ${Code.genExportRefCode(res)}
       }
     }
@@ -334,6 +334,19 @@ const genCode = async () => {
   eval(`options = ${code}`);
   previewComponent.value = defineComponent(options);
   ModuleDmM.showCodePanel = true;
+};
+
+// 发布系统
+const publish = () => {
+  ModuleM.updateParams.code = ModuleDmM.code;
+  ModuleM.save();
+};
+
+// 运行
+const run = () => {
+  let options = {};
+  eval(`options = ${ModuleDmM.code}`);
+  previewComponent.value = defineComponent(options);
 };
 </script>
 <style lang="less" scoped>

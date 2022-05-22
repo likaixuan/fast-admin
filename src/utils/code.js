@@ -1,3 +1,39 @@
+import useM from "@/hooks/useM.js";
+import DataModel from "@/model/DataModel";
+import ModuleDm from "@/model/ModuleDm";
+import ModuleDmField from "@/model/ModuleDmField";
+import { firstToUpperCase, underlineToHump } from "@/utils/util.js";
+// 格式化数据模型数据 用于代码生成
+const _formatModelData = async (treeData) => {
+  let modelName = "";
+  let tableName = "";
+  let modelCname = treeData.module_dm_name;
+  let primaryKey = "_id";
+  const dataModelData = await DataModel.findAll({
+    data_model_id: treeData.data_model_id,
+  });
+  tableName = dataModelData.data[0].table_name;
+  modelName = firstToUpperCase(underlineToHump(tableName));
+  const dataModelFieldData = await ModuleDmField.findAll({
+    module_dm_id: treeData.module_dm_id,
+  });
+  const arr = [];
+  if (treeData.children.length > 0) {
+    for (let data of treeData.children) {
+      let t = await _formatModelData(data);
+      arr.push(t);
+    }
+  }
+  return {
+    modelName,
+    tableName,
+    modelCname,
+    primaryKey,
+    fields: dataModelFieldData.data,
+    children: arr,
+  };
+};
+
 export default {
   // 生成fields
   _genFields(fields) {
@@ -54,7 +90,7 @@ export default {
       }
     `;
     treeData.children &&
-    treeData.children.forEach((item) => {
+      treeData.children.forEach((item) => {
         str += this.genModelClassCode(item);
       });
     return str;
@@ -127,14 +163,14 @@ export default {
     let str = ``;
     subs &&
       subs.forEach((item) => {
-        let injectStr = ''
-        const field = item.fields.find((field)=>{
-          return field.inject_key
-        })
-        if(field) {
-          injectStr = `inject:['${field.field_name}','${field.inject_key}'],`
+        let injectStr = "";
+        const field = item.fields.find((field) => {
+          return field.inject_key;
+        });
+        if (field) {
+          injectStr = `inject:['${field.field_name}','${field.inject_key}'],`;
         }
-        console.log(injectStr,2233445)
+        console.log(injectStr, 2233445);
         str += `${item.modelName}M:useM(${item.modelName}${this.genSubJsCode(
           item.children
         )},{${injectStr}}),`;
@@ -151,5 +187,31 @@ export default {
     `;
     str += this.genSubMCode(treeData.children, treeData.modelName);
     return str;
+  },
+
+  // 加载模块数据模型
+  /**
+   * @params { module_id}
+   */
+  async getCode(module_id) {
+    const ModuleDmM = useM(ModuleDm, {
+      addQueryParams: {
+        module_id,
+      },
+      ModuleDmFieldM: useM(ModuleDmField),
+    });
+    await ModuleDmM.findTree();
+    const res = await _formatModelData(ModuleDmM.treeData[0]);
+    return `{
+      template:\`${this.genTemplateCode(res)}\`,
+      setup() {
+        // 模型代码
+        ${this.genModelClassCode(res)}
+        // JS 循环引用代码
+        ${this.genJsCode(res)}
+        return ${this.genExportRefCode(res)}
+      }
+    }
+   `;
   },
 };

@@ -12,6 +12,7 @@ const NotFound = () => import("@/pages/404.vue");
 const module = () => import("@/pages/sys/module/index.vue");
 const role = () => import("@/pages/sys/role/index.vue");
 const dataModel = () => import("@/pages/sys/dataModel/index.vue");
+const user = () => import("@/pages/sys/user/index.vue");
 export const routes = [
   {
     path: "/",
@@ -59,6 +60,11 @@ export const dyModuleMap = [
     path: "/dataModel",
     component: dataModel,
   },
+  {
+    path:"/user",
+    component: user,
+
+  }
 ].reduce((map, item) => {
   // 添加默认的name项 用于keep-alive include缓存所用
   map[item.path.slice(1)] = {
@@ -76,7 +82,6 @@ export const router = createRouter({
 
 // // 路由守卫
 router.beforeEach(async (to, from, next) => {
-  console.log(to, from, 9999);
   // canUserAccess() 返回 `true` 或 `false`
   const userStore = useUserStore();
   const commonStore = useCommonStore();
@@ -84,9 +89,9 @@ router.beforeEach(async (to, from, next) => {
   if (to.fullPath === "/login") {
     next();
   }
-  // else if (!userStore.userInfo) {
-  //   next('/login')
-  // }
+  else if (!userStore.userInfo||!userStore.userInfo.token) {
+    next('/login')
+  }
   else {
     commonStore.addCachePage(to);
     next();

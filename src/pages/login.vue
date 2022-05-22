@@ -10,13 +10,17 @@
               <div class="login-form">
                 <div class="login-form-title">账号密码登录</div>
                 <div class="login-input-item">
-                  <a-input placeholder="请输入登录账号" />
+                  <a-input
+                    placeholder="请输入登录账号"
+                    v-model:value="params.user_name"
+                  />
                 </div>
                 <div class="login-input-item">
                   <a-input
                     type="password"
                     placeholder="请输入登录密码"
-                    @pressEnter="goLogin"
+                    v-model:value="params.pwd"
+                    @pressEnter="login"
                   />
                 </div>
                 <div class="login-btn">
@@ -25,7 +29,7 @@
                     shape="round"
                     block
                     size="large"
-                    @click="goLogin"
+                    @click="login"
                   >
                     登录
                   </a-button>
@@ -41,13 +45,24 @@
 
 <script setup>
 import { message } from "ant-design-vue";
-
-const goLogin = () => {
-  message.success("调用登录接口");
+import User from "@/model/User.js";
+import { reactive } from "vue";
+import { useUserStore } from "../store/modules/user";
+import { useRouter } from "vue-router";
+ const router = useRouter();
+let params = reactive({
+  user_name: "",
+  pwd: "",
+});
+const login = () => {
+  User.login(params).then((res) => {
+    const userStore = useUserStore();
+    userStore.setUserInfo(res.data.userInfo);
+   
+    console.log(router, 5345345345);
+    router.replace("/");
+  });
 };
-
-const logo =
-  "https://himg.bdimg.com/sys/portraitn/item/e065bed5bba8b2bfc2e4f923";
 </script>
 
 <style lang="less">
@@ -65,7 +80,7 @@ const logo =
     .login-left {
       height: 100%;
       flex: 1.5;
-      background: url("/img/login.png") no-repeat 0 0;
+      background: url("/img/login.jpg") no-repeat 0 0;
       background-size: 100% 100% cover;
       background-size: cover;
       position: relative;

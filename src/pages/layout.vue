@@ -73,7 +73,8 @@
         <div class="text-xl">野狗低代码</div>
         <div class="toolbar">
           <el-dropdown>
-            <el-image
+            <div style="display:flex;align-items:center;">
+                 <el-image
               style="
                 width: 40px;
                 height: 40px;
@@ -83,6 +84,9 @@
               src="/img/avatar.png"
               fit="cover"
             />
+            <span>{{userStore.userInfo.real_name}}</span>
+            </div>
+         
             <template #dropdown>
               <el-dropdown-menu>
                 <el-dropdown-item @click="logout">退出登录</el-dropdown-item>

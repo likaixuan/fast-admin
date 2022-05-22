@@ -28,7 +28,7 @@ export default class DataModelField {
     textarea: {
       input_type: "textarea",
       field_type: "varchar",
-      data_type: "Number",
+      data_type: "String",
       len: 1024,
     },
     join: {
