@@ -216,7 +216,9 @@ const router = useRouter();
 const userStore = useUserStore();
 
 const logout = () => {
-  console.log(234234234);
+  commonStore.restRoutes()
+  userStore.setUserInfo(null)
+  router.replace('/login');
 };
 
 const handleTabClick = (tab) => {

@@ -33,6 +33,11 @@ let tableData = [
     address: "河北沧州",
     sexId: 1,
   },
+  {
+    name: "海燕",
+    address: "辽宁",
+    sexId: 1,
+  }
 ];
 const fields = [
   {
@@ -48,9 +53,13 @@ const fields = [
     label: "性别",
     listOptions: {
       tagType: "success",
-      contentFilter(rowData,name) {
-          return   rowData[name] === 1 ? "男" : "女" 
-      }
+      contentFilter(rowData, name) {
+        if (rowData[name] === 1) {
+          return "男";
+        } else {
+          return "女";
+        }
+      },
     },
   },
 ];

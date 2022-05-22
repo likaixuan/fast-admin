@@ -70,6 +70,7 @@ export const useCommonStore = defineStore({
                 router.removeRoute(route.name)
             })
             this.removeRoutes = []
+            this.setMenu([])
         },
         // 动态添加路由
         setRoutes(accessRoutes) {

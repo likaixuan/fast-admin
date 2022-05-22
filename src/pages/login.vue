@@ -55,12 +55,13 @@ let params = reactive({
   pwd: "",
 });
 const login = () => {
-  User.login(params).then((res) => {
+  User.login(params).then(async (res) => {
     const userStore = useUserStore();
     userStore.setUserInfo(res.data.userInfo);
    
     console.log(router, 5345345345);
-    router.replace("/");
+    await userStore.setRouter()
+    router.replace("/");  
   });
 };
 </script>

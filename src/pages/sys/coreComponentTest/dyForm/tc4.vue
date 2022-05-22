@@ -20,8 +20,6 @@
         <h2>表单</h2>
         <el-divider></el-divider>
       </div>
-      {{labelPosition}}
-      {{inline}}
       <dyForm
         :fields="fields"
         v-model="formData"

@@ -1,7 +1,6 @@
 <template>
   <div class="curd">
     <div v-show="!dataModel.isShowEditPanel">
-      {{ dataModel.queryFields }}
       <dyForm
         :dataModel="dataModel"
         :fields="queryFields"
@@ -50,7 +49,6 @@
         />
       </div>
     </div>
-
     <!-- 编辑面板  -->
     <div class="curd-edit-panel" v-if="dataModel.isShowEditPanel">
       <!-- <a-divider /> -->
@@ -93,31 +91,6 @@
         <slot name="updateFormAfter"> </slot>
       </div>
     </div>
-    <!-- 编辑 -->
-    <!-- <a-modal
-      v-model:visible="dataModel.isShowEditPanel"
-      :title="dataModel.editPanelTitle"
-      :width="dataModel.dialogWidth"
-      wrap-class-name="full-modal"
-      :footer="null"
-    >  
-    <div class="edit-panel-content-wrapper"></div>
-      <a-spin :spinning="dataModel.isShowEditLoading">
-        <a-space>
-          <el-button @click="dataModel.isShowEditPanel = false">取消</el-button>
-          <el-button
-            type="primary"
-            @click="dataModel.save()"
-            :loading="dataModel.isShowEditLoading"
-            >保存</el-button
-          >
-        </a-space>
-        <div class="edit-form-wrapper">
-          <dyForm :dataModel="dataModel" name="update"></dyForm>
-        </div>
-        <slot name="editPanelBottom"> </slot>
-      </a-spin>
-    </a-modal> -->
   </div>
 </template>
 <script setup>
@@ -128,7 +101,6 @@ import useFields from "@/hooks/useFields";
 const props = defineProps({
   dataModel: Object,
 });
-
 const { fields: queryFields } = useFields({
   fields: props.dataModel.fields,
   scene: "query",
@@ -145,20 +117,17 @@ const { fields: listFields } = useFields({
   fields: props.dataModel.fields,
   scene: "list",
 });
-
 // 处理选中
 const handleSelectionChange = function (selectedRowKeys) {
   console.log(selectedRowKeys, 453434);
   props.dataModel.selectedRowKeys = selectedRowKeys;
 };
-
 // 点击编辑
 const onUpdateBtnClick = function (rowData) {
   props.dataModel.showEditPanel({
     addParams: rowData,
   });
 };
-
 // 分页
 const pagination = computed(() => {
   const m = props.dataModel;
@@ -182,7 +151,6 @@ const findOrFindAll = () => {
   }
 };
 findOrFindAll();
-
 const emit = defineEmits(["formChange"]);
 const onDyFormChange = (...args) => {
   emit("formChange", ...args);
